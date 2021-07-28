@@ -1,0 +1,19 @@
+Q.Given an array which consists of only 0, 1 and 2. Sort the array without using any sorting algo
+Sol:
+def sortColors(self, nums: List[int]) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+        end = len(nums) - 1
+        start = 0
+        i = 0
+        while i <= end:
+            if nums[i] == 0:
+                nums[i], nums[start] = nums[start], 0
+                i += 1
+                start += 1
+            elif nums[i] == 2:
+                nums[i], nums[end] = nums[end], 2
+                end -= 1
+            else:
+                i += 1
