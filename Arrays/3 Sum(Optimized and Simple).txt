@@ -1,0 +1,30 @@
+class Solution
+{
+    //Function to find if there exists a triplet in the 
+    //array A[] which sums up to X.
+    public static boolean twoSum(int A[], int left, int right, int sum) {
+        while(left < right) {
+            if((A[left] + A[right]) == sum) {
+                return true;
+            }
+            else if((A[left] + A[right]) > sum) {
+                right--;
+            }
+            else {
+                left++;
+            }
+        }
+        return false;
+    }
+    public static boolean find3Numbers(int A[], int n, int X) { 
+    
+       // Your code Here
+       Arrays.sort(A);
+       for (int i = 0; i < A.length - 2; i++) {
+           if(twoSum(A, i+1, A.length - 1, X - A[i]) == true) {
+               return true;
+           }
+       }
+       return false;
+    }
+}
