@@ -1,0 +1,42 @@
+from collections import defaultdict
+class Graph:
+    def __init__(self, nodes):
+        self.graph = defaultdict(dict)
+        self.cycle = False
+        self.nodes = nodes
+    
+    def addEdge(self, u, v, weight = 1):
+        self.graph[u][v] = weight
+    
+    
+    def dfs(self):
+        def helper(node, visited):
+            
+            for vertex in self.graph[node]:
+                if visited[vertex] == True:
+                    self.cycle = True
+                    print(vertex)
+                    return
+                visited[vertex] = True
+                helper(vertex, visited.copy())
+                visited[vertex] = False
+        
+        visited = [False for i in range(self.nodes)]
+        for i in range(self.nodes):
+            visited[i] = True
+            helper(i,visited.copy())
+            visited[i] = False
+        if self.cycle:
+            print("Cycle")
+        else:
+            print("No Cycle")            
+    
+g = Graph(5) 
+g.addEdge(0, 1) 
+g.addEdge(2, 1) 
+g.addEdge(4, 0)
+# g.addEdge(4, 2)
+g.addEdge(3, 4)
+g.addEdge(2, 3) 
+g.dfs()
+print(g.graph)

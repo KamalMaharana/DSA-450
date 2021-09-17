@@ -1,0 +1,22 @@
+def dfs(a,i,j):
+    if(i<0 or i >= len(a) or j < 0 or j >= len(a[0]) or a[i][j] == 0):
+        return 0
+    a[i][j] = 0
+    sums = 1 + dfs(a,i+1,j) + dfs(a,i-1,j) + dfs(a,i,j+1) + dfs(a,i,j-1)
+    return sums
+    
+    
+    
+
+a = [[0,0,0],
+    [1,1,1],
+    [0,1,1]]
+    
+maxi = 0
+for i in range(len(a)):
+    for j in range(len(a[0])):
+        if(a[i][j] == 1):
+            maxi = max(maxi,dfs(a,i,j))
+
+print(maxi)
+        

@@ -1,0 +1,47 @@
+from collections import defaultdict
+class Graph:
+    def __init__(self):
+        self.graph = defaultdict(dict)
+    
+    def addEdge(self, u, v, weight = 1):
+        self.graph[u][v] = weight
+        # self.graph[v][u] = weight
+    
+    def bfs(self, start = 1):
+        visited = [False] * (len(self.graph) + 1)
+        queue = [start]
+        visited[start] = True
+        while queue:
+            s = queue.pop(0)
+            print(s, "-> ", end = "")
+            for vertex in self.graph[s]:
+                if not visited[vertex]:
+                    queue.append(vertex)
+                    visited[vertex] = True
+        
+        print("END")
+    
+    def dfs(self, start = 1):
+        def dfsPrivate(node, visited):
+            print(node, "-> ", end = "")
+            visited[node] = True
+            for vertex in self.graph[node]:
+                if not visited[vertex]:
+                    dfsPrivate(vertex, visited)
+        
+        visited = [False] * (len(self.graph) + 1)
+        dfsPrivate(start, visited)            
+        print("END")
+        
+        
+g = Graph()
+g.addEdge(0, 1) 
+g.addEdge(0, 2) 
+g.addEdge(1, 2) 
+g.addEdge(2, 0) 
+g.addEdge(2, 3) 
+g.addEdge(3, 3) 
+print("DFS: ")
+g.dfs(2)
+print("BFS: ")
+g.bfs(2)

@@ -1,0 +1,20 @@
+from collections import defaultdict
+import heapq as heap
+def shortestPath(graph, src, dest):
+    h = []
+    heap.heappush(h, (0, src))
+    while h:
+        curr_cost, curr_vtx = heap.heappop(h)
+        if curr_vtx == dest:
+            return curr_cost
+        
+        for neigh, neigh_cost in graph[curr_vtx]:
+            heap.heappush(h, (curr_cost + neigh_cost, neigh))
+            
+graph = defaultdict(list)
+vertices, edges = map(int, input().split())
+for i in range(edges):
+    u, v, weight = map(str, input().split())
+    graph[u].append((v, w))
+src, dest = map(str, input().split())
+shortestPath(graph, src, dest)

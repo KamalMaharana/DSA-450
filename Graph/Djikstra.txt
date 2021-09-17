@@ -1,0 +1,86 @@
+from collections import defaultdict
+class Graph:
+    def __init__(self):
+        self.vertices = defaultdict(dict)
+    
+    def addEdge(self, u, v, weight):
+        self.vertices[u][v] = weight
+        self.vertices[v][u] = weight
+    
+    def djikstra(self, source):
+        def default_parent():
+            return -1
+        def default_visited():
+            return False
+        def default_values():
+            return float('inf')
+            
+            
+        visited = defaultdict(default_visited)
+        values = defaultdict(default_values)
+        values[source] = 0
+        parent = defaultdict(default_parent)
+        
+        
+        def find_minimum_vertex(values, visited):
+            min_node = float('inf')
+            for val in values:
+                if values[val] < min_node and visited[val] == False:
+                    min_node = val
+            
+            return min_node
+            
+        for _ in range(len(self.vertices)):
+            node = find_minimum_vertex(values, visited)
+            visited[node] = True
+            for neighbour in self.vertices[node]:
+                if (values[node] + self.vertices[node][neighbour]) < values[neighbour]:
+                    values[neighbour] = values[node] + self.vertices[node][neighbour]
+                    parent[neighbour] = node
+        return (values, parent)
+    
+    def path(self, src, dest):
+        x = self.djikstra(src)
+        result = ""
+        final = dest
+        values, parent = x[0], x[1]
+        stack = [dest]
+        while dest != -1:
+            stack.append(parent[dest])
+            dest = parent[dest]
+        
+        stack.pop()
+        while len(stack) > 1:
+            result = result + str(stack.pop()) + " -> "
+        result += str(stack.pop()) + " Cost = " + str(values[final])
+        
+        return result
+        
+            
+    
+    def printGraph(self):
+        for node in self.vertices:
+            print("Node: ", node, "Neighbours: ", self.vertices[node])
+    
+
+g = Graph()
+
+g.addEdge(0,1,1)
+g.addEdge(0,2,4)
+g.addEdge(1,3,2)
+g.addEdge(1,4,7)
+g.addEdge(1,2,4)
+g.addEdge(2,4,5)
+g.addEdge(2,3,3)
+g.addEdge(3,4,4)
+g.addEdge(3,5,6)
+g.addEdge(4,5,7)
+
+
+# g.printGraph()
+
+print(g.path(0, 3))
+
+
+
+

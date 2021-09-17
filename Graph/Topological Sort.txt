@@ -1,0 +1,36 @@
+# Topological Sort
+from collections import defaultdict as dd
+from collections import deque
+class Graph:
+    def __init__(self):
+        self.graph = dd(deque)
+        
+    def addEdge(self, u, v):
+        self.graph[u].append(v)
+    
+    def dfsUtil(self, node, visited, stack):
+        visited[node] = True
+        for neighbour in self.graph[node]:
+            if not visited[neighbour]:
+                visited[neighbour] = True
+                self.dfsUtil(neighbour, visited, stack)
+        
+        stack.insert(0, node)
+    
+    def dfs(self):
+        visited = [False] * 6
+        stack = []
+        for i in range(6):
+            if not visited[i]:
+                self.dfsUtil(i, visited, stack)
+        print(stack)
+
+g = Graph()
+g.addEdge(5, 0)
+g.addEdge(4, 0)
+g.addEdge(5, 2)
+g.addEdge(2, 3)
+g.addEdge(3, 1)
+g.addEdge(4, 1)
+
+g.dfs()

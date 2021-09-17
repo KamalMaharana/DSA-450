@@ -1,0 +1,88 @@
+class Node:
+    def __init__(self, val, left = None, right = None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+class BST:
+    def __init__(self, arr):
+        self.arr = arr
+        self.root = None
+    
+    def createBST(self):
+        root = None
+        def createBSTUtil(val):
+            if self.root == None:
+                self.root = Node(val)
+                return
+            temp = self.root
+            while temp != None:
+                if temp.val < val:
+                    if temp.right == None:
+                        temp.right = Node(val)
+                        return
+                    else:
+                        temp = temp.right
+                else:
+                    if temp.left == None:
+                        temp.left = Node(val)
+                        return
+                    else:
+                        temp = temp.left
+        
+            
+        for i in self.arr:
+            createBSTUtil(i)
+            
+    
+    def inorder(self):
+        def inorderUtil(node):
+            if node == None:
+                return 
+            inorderUtil(node.left)
+            print(node.val, "->", end = " ")
+            inorderUtil(node.right)
+        
+        inorderUtil(self.root)
+    
+    def deleteNode(self, val):
+        def minVal(node):
+            curr = node
+            while curr.left != None:
+                curr = curr.left
+            return curr
+            
+        def deleteNodeUtil(root, val):
+            if root == None:
+                return root
+            
+            if val < root.val:
+                root.left = deleteNodeUtil(root.left, val)
+            elif val > root.val:
+                root.right = deleteNodeUtil(root.right, val)
+            else:
+                if root.left == None:
+                    temp = root.right
+                    root = None
+                    return temp
+                elif root.right == None:
+                    temp = root.left
+                    root = None
+                    return temp
+                else:
+                    temp = minVal(root.right)
+                    root.val = temp.val
+                    root.right = deleteNodeUtil(root.right, temp.val)
+            
+            return root
+        
+        deleteNodeUtil(self.root,val)
+
+
+tree = BST([5,8,7,3,4,6,2,1,10,9,11])
+tree.createBST()
+tree.inorder()
+tree.deleteNode(8)
+print()
+print("After Delete")
+tree.inorder()
