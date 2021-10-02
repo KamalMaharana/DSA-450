@@ -1,0 +1,20 @@
+Q. https://leetcode.com/problems/dungeon-game/
+class Solution:
+    def calculateMinimumHP(self, dungeon: List[List[int]]) -> int:
+        m = len(dungeon)
+        n = len(dungeon[0])
+        dp = [[0]*n for _ in range(m)]
+        
+        for i in range(m-1, -1, -1):
+            for j in range(n-1, -1, -1):
+                if i == m-1 and j == n-1:
+                    dp[i][j] = 0 if dungeon[i][j] >= 0 else dungeon[i][j]
+                    continue
+                if i == m-1 and j != n-1:
+                    dp_max = dp[m-1][j+1] + dungeon[m-1][j]
+                if  i != m-1 and j == n-1:
+                    dp_max = dp[i+1][n-1] + dungeon[i][n-1]
+                if i != m-1 and j != n-1:
+                    dp_max = max(dp[i][j+1], dp[i+1][j]) + dungeon[i][j]
+                dp[i][j] = 0 if dp_max >= 0 else dp_max
+        return abs(dp[0][0])+1 if dp[0][0] <= 0 else 1
