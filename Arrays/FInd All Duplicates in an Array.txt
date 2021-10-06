@@ -1,0 +1,19 @@
+Notes:
+As here the array values are between 1 - len(arr); then we can traverse linearly
+from 0 to len(arr);
+then take the value i.e arr[i] as index and check 
+if nums[arr[i]] < 0:
+   then it's a duplicate,so append the index + 1 in ans to make it 1-based index
+then convert the value to negative which indicates that it has been visited.
+Here -ve number shows that the index has been visited.
+
+Solution:
+class Solution:
+    def findDuplicates(self, nums: List[int]) -> List[int]:
+        result = list()
+        for i in range(len(nums)):
+            index = abs(nums[i]) - 1
+            if nums[index] < 0:
+                result.append(index + 1)
+            nums[index] = -nums[index] // or nums[index] * -1
+        return result
