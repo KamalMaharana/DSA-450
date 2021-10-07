@@ -1,0 +1,29 @@
+Note:
+(DFS, BackTracking)
+In this question we have to use DFS.
+Whenever we find the 1st char of the string, we start DFS from that index in all 4 directions.
+In DFS, we replace the character with blank character, then call DFS recursively
+in all 4 direction and check if in any of the direction can I find the word?
+(Use OR when calling DFS in each direction)
+Count will keep track of current character to find in the grid.
+
+Solution:
+class Solution:
+    def exist(self, board: List[List[str]], word: str) -> bool:
+        def found(board, i, j, count, word):
+            if count == len(word):
+                return True
+            if i < 0 or i >= len(board) or j < 0 or j >= len(board[0]) or board[i][j] != word[count]:
+                return False
+            temp = board[i][j]
+            board[i][j] = " "
+            flag = found(board, i+1, j, count + 1, word) or found(board, i-1, j, count + 1, word) or found(board, i, j+1, count + 1, word) or found(board, i, j-1, count + 1, word)
+            board[i][j] = temp
+            
+            return flag
+        
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                if board[i][j] == word[0] and found(board, i, j, 0, word):
+                    return True
+        return False
