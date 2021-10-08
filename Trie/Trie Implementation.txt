@@ -1,0 +1,83 @@
+Notes: In this, the nodes in trie are nothing but TreeNodes with following 
+properties
+VALUE(character), Children(Array or HashMap/DICT), EndsHere(Boolean)
+Here the VALUE is the character stored in the node.
+Children consists of all the TreeNode that child of current node.(Use DICT here)
+EndsHere indicates if this is the END of a word that is stored in Trie,
+It helps to check if a complete word is present or not.
+In TRIE, the root is a wild character or a null character which can take any value
+Children of the root will have the starting character of the words stored in TRIE
+Just like linkedList, use a dummy variable to traverse the TRIE
+temp = root
+from then check, if "ch" is present in temp.children
+If yes, then move temp forward by temp = temp.children[ch]
+Else, add the child character by set temp.children[ch] = TreeNode(ch);
+	then move temp = temp.children[ch]
+After all characters are added, then temp will be in last character of the word.
+So set the temp.endHere = True; indicating this is the END of a word.
+
+To search, iterate the TRIE with a dummy node like temp;
+whenever you don't find a character in Children dictionary, then return False.
+Else keep on iterating until you reach the end of the string you are searching, 
+at end if the endsHere property of the node is True, then the complete word is 
+found, else return False because the word found till now is just part of a bigger
+word, eg: apple, app so the tree will be * -> a -> p -> p(end) -> l -> e(end)
+As you can see, end can be anywhere in the tree, but this reduced redundancy of characters.
+
+
+class TreeNode:
+    def __init__(self, value):
+        self.value = value
+        self.children = {}
+        self.endsHere = False
+class Trie:
+
+    def __init__(self):
+        """
+        Initialize your data structure here.
+        """
+        self.root = TreeNode(None)
+        
+
+    def insert(self, word: str) -> None:
+        """
+        Inserts a word into the trie.
+        """
+        main = self.root
+        for index, char in enumerate(word):
+            if char not in main.children:
+                main.children[char] = TreeNode(char)
+            main = main.children[char]
+        if index == len(word)-1:
+            main.endsHere = True
+        
+
+    def search(self, word: str) -> bool:
+        """
+        Returns if the word is in the trie.
+        """
+        main = self.root
+        for char in word:
+            if char not in main.children:
+                return False
+            main = main.children[char]
+        return main.endsHere
+        
+
+    def startsWith(self, prefix: str) -> bool:
+        """
+        Returns if there is any word in the trie that starts with the given prefix.
+        """
+        main = self.root
+        for char in prefix:
+            if char not in main.children:
+                return False
+            main = main.children[char]
+        return True
+
+
+# Your Trie object will be instantiated and called as such:
+# obj = Trie()
+# obj.insert(word)
+# param_2 = obj.search(word)
+# param_3 = obj.startsWith(prefix)
