@@ -1,0 +1,46 @@
+Note:
+Here, for every node, we are checking if Left_Height + RightHeight of subtree
+that are starting from current Node.
+For diameter we have to check the height of left and right subtree of all nodes.
+So we use memoization to avoid recalculation of Node Heights.
+So 1st we check for diameter at root, then on left, then on right.
+then below it and so on.
+As we are moving down, we are calculating and storing the left and right 
+heights of respective Nodes.
+So when returning we check if sum(left_height + right_height) is greater than
+the node below.
+
+
+
+Solution:
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+nodeHeights = {}
+def height(node):
+        if node is None:
+            return 0
+        if node in nodeHeights:
+            return nodeHeights[node]
+        nodeHeights[node] = (1 + max(height(node.left), height(node.right)))
+        return nodeHeights[node]
+
+def diameterOfBinaryTree(root):
+        if root is None:
+            return 0
+        
+        lheight = height(root.left)
+        rheight = height(root.right)
+        
+        ldiameter = diameterOfBinaryTree(root.left)
+        rdiameter = diameterOfBinaryTree(root.right)
+        
+        return max(lheight + rheight, max(ldiameter, rdiameter))
+
+class Solution:
+    
+    def diameterOfBinaryTree(self, root: TreeNode) -> int:
+        return diameterOfBinaryTree(root)

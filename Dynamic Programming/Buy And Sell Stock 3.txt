@@ -1,0 +1,28 @@
+Note: Applying Traditional Buy and Sell Stock twice.
+As we have to buy or skip 1st day because we cannot sell.
+Also our starting MONEY is 0 so if we buy, our money will go -ve, so starting 
+the buying process with -ve price[0].
+On selling, we get the profit, so 1Buy1Sell will give profit of 1st transaction;
+as we don't have anything to sell, we initialize it to 0; and when ever we sell
+we find the difference between prev buy and current selling price; 
+as we are having BUY as -ve, we just ADD current price with prev buy to get the 
+difference and ADD it to our MONEY.
+Similarly, when we buy 2nd, we need to deduct MONEY, so MONEY will be deducted 
+from previous sell, so subtract prev sell and current price.
+then similar to 1st buy sell, we sell the 2nd stock and get the profit but 
+getting the difference between buying price in prev step and current selling price.
+
+
+Solution:
+def maxProfit(self, prices: List[int]) -> int:
+        oneBuy = -math.inf
+        oneBuyOneSell = 0
+        twoBuy = -math.inf
+        twoBuyTwoSell = 0
+        
+        for price in prices:
+            oneBuy = max(oneBuy, -price)
+            oneBuyOneSell = max(oneBuyOneSell, oneBuy+price)
+            twoBuy = max(twoBuy, oneBuyOneSell-price)
+            twoBuyTwoSell = max(twoBuyTwoSell, twoBuy+price)
+        return twoBuyTwoSell

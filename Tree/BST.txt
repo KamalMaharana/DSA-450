@@ -11,28 +11,18 @@ class BST:
     
     def createBST(self):
         root = None
-        def createBSTUtil(val):
-            if self.root == None:
-                self.root = Node(val)
-                return
-            temp = self.root
-            while temp != None:
-                if temp.val < val:
-                    if temp.right == None:
-                        temp.right = Node(val)
-                        return
-                    else:
-                        temp = temp.right
-                else:
-                    if temp.left == None:
-                        temp.left = Node(val)
-                        return
-                    else:
-                        temp = temp.left
+        def formBst(node, val):
+            if not node:
+                return Node(val)
+            if val > node.val:
+                node.right = formBst(node.right, val)
+            elif val < node.val:
+                node.left = formBst(node.left, val)
+            return node
         
             
         for i in self.arr:
-            createBSTUtil(i)
+            formBst(root, i)
             
     
     def inorder(self):

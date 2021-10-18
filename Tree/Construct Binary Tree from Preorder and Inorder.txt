@@ -1,0 +1,29 @@
+Note:
+From preorder, we get the root of the tree, then we find the index of that root
+in inorder array, after finding the index, inorder[0 -> index] will form 
+left subtree and inorder[index + 1 -> end] will form right subtree.
+So pop from preorder array; 
+Find index in inorder array;
+Split the inorder array in left and right halfs and then call
+the function recursively and send the left and right split of inorder 
+to form left and right subtree of current node.
+eventually inorder array will become empty; in that case don't return anything
+or return None.
+return node.
+
+
+Solution:
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def buildTree(self, preorder: List[int], inorder: List[int]) -> TreeNode:
+        if inorder:
+            ind = inorder.index(preorder.pop(0))
+            root = TreeNode(inorder[ind])
+            root.left = self.buildTree(preorder, inorder[0:ind])
+            root.right = self.buildTree(preorder, inorder[ind+1:])
+            return root

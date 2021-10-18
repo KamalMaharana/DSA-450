@@ -1,0 +1,31 @@
+Note: In this, the 1st element of preorder will be the root of the BST coz preorder
+is ROOT- > Left -> RIGHT. So I started the process with root as None, and on each
+call, we are resetting the node mappings.
+So if we get to None, that means this is the position to fill, so we return a 
+TreeNode with the given value.
+After returning we will reassign the mapping(if right then right, if left then left) 
+This is a easy way to form a Normal BST also, just find the root thats it.
+
+Solution(1):
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def bstFromPreorder(self, preorder: List[int]) -> Optional[TreeNode]:
+        def formBst(node, val):
+            if not node:
+                return TreeNode(val)
+            if val > node.val:
+                node.right = formBst(node.right, val)
+            elif val < node.val:
+                node.left = formBst(node.left, val)
+            return node
+        
+        root = None
+        for i in range(len(preorder)):
+            val = preorder[i]
+            root = formBst(root, val)
+        return root

@@ -1,0 +1,36 @@
+Note:
+Here we have to use the logic of this problem "Subarray sum equals K"
+In this for every recursive call, we maintain a HashMap that will keep track
+of previous sum and their occuerences.
+So 1st we check if curr_sum == target.
+Then we check if curr_sum - target is present in the HashMap, if yes then 
+increment the count as many times as the occurence of (curr_sum - target) in the 
+HashMap.
+We used deepcopy to recursively pass DICT in python.
+
+Explanation: 
+https://leetcode.com/problems/path-sum-iii/discuss/141424/Python-step-by-step-walk-through.-Easy-to-understand.-Two-solutions-comparison.-%3A-)
+Solution:
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+from copy import deepcopy
+class Solution:
+    def pathSum(self, root: Optional[TreeNode], targetSum: int) -> int:
+        self.count = 0
+        def dfs(node, curr_sum, targetSum, sum_map):
+            if node:
+                curr_sum += node.val
+                temp = curr_sum - targetSum
+                if curr_sum == targetSum:
+                    self.count += 1
+                if temp in sum_map:
+                    self.count += sum_map[temp]
+                sum_map[curr_sum] += 1
+                dfs(node.left, curr_sum, targetSum, deepcopy(sum_map))
+                dfs(node.right, curr_sum, targetSum, deepcopy(sum_map))
+        dfs(root, 0, targetSum, defaultdict(lambda: 0))
+        return self.count
