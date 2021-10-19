@@ -1,0 +1,57 @@
+import random
+a = [random.randrange(1, 90) for i in range(5)]
+print(a)
+
+# Bubble Sort
+for i in range(len(a)):
+    for j in range(len(a)):
+        if a[i] < a[j]:
+            a[i], a[j] = a[j], a[i]
+    print(a)
+
+# Selection sort
+for i in range(len(a)):
+    mini = i
+    for j in range(i, len(a)):
+        if a[j] < a[mini]:
+            mini = j
+    
+    a[i], a[mini] = a[mini], a[i]
+
+print(a)
+
+# Insertion Sort
+for i in range(len(a)):
+    pos = i
+    while pos > 0 and a[pos] < a[pos-1]:
+        a[pos], a[pos-1] = a[pos-1], a[pos]
+        pos -= 1
+print(a)
+
+
+# Quick Sort
+def partition(a, low, high):
+    pivot = a[low]
+    left, right = low + 1, high
+    while left < right:
+        while a[left] <= pivot:
+            left += 1
+        while a[right] > pivot:
+            right -= 1
+        if left < right:
+            a[left], a[right] = a[right], a[left]
+        
+    a[low] = a[right]
+    a[right] = pivot
+    return right
+
+def QuickSort(a, low, high):
+    if low < high:
+        pp = partition(a, low, high)
+        
+        QuickSort(a, low, pp-1)
+        QuickSort(a, pp+1, high)
+        
+
+QuickSort(a, 0, len(a)-1)
+print(a)
