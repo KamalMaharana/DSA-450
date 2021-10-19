@@ -1,0 +1,69 @@
+class Node:
+    def __init__(self, val):
+        self.val = val
+        self.next = None
+
+import random
+a = [random.randrange(1, 90) for i in range(5)]
+print(a)
+
+head = Node(a[0])
+temp = head
+for i in range(1, len(a)):
+    temp.next = Node(a[i])
+    temp = temp.next
+    
+    
+def printLL(head):
+    temp = head
+    while temp.next:
+        print(temp.val, "->", end = " ")
+        temp = temp.next
+    print(temp.val)
+
+printLL(head)
+
+
+def getMiddle(head):
+    slow = head
+    fast = head
+    while fast.next and fast.next.next:
+        slow = slow.next
+        fast = fast.next.next
+    return slow
+
+def merge(a, b):
+    # Base Case of recursion
+    if a == None:
+        return b
+    if b == None:
+        return a
+    
+    result = None
+    if a.val <= b.val:
+        result = a
+        result.next = merge(a.next, b)
+    else:
+        result = b
+        result.next = merge(a, b.next)
+    return result
+
+def mergeSortLL(head):
+    if head == None or head.next == None:
+        return head
+    middle = getMiddle(head)
+    nextToMiddle = middle.next
+    middle.next = None
+    left = mergeSortLL(head)
+    right = mergeSortLL(nextToMiddle)
+    sortedList = merge(left, right)
+    return sortedList
+
+    
+printLL(mergeSortLL(head))
+    
+    
+    
+    
+    
+    
