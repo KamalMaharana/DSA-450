@@ -1,0 +1,34 @@
+Note:
+This is similar to previous question without duplicates.
+In this, due to duplicates, we cannot decide whether to move tot right
+pointer or the left pointer.
+arr[] = [1, 2, 3, 4, 5, 6, 7]
+So as we know, that if arr[mid] < arr[right]l then we are in the left half
+of the sorted array i.e [1,2,3,4].
+And if arr[mid] > arr[right] then we are at the right half of the sorted
+array, i.e [4,5,6,7]
+So in case of duplicates, when above conditions doesn't satisfy, then we
+just decrement the right pointer because even if the arr[right] = min;
+but it is a repeated value, so we can always get the 1st index of that
+value by decrementing the right pointer and eliminating that element from
+search space.
+Here, we are taking right = mid because when we are in left half of sorted
+arr, there is a possibility that the current elemnt could be the answer.
+But we do left = left - 1; because when we are in right half of the sorted
+array, thenre is no way that element at lefy i.e arr[left] can be the ans.
+Choose this increment and decrement of pointers based on the chances that
+the value at current point has the potential to be the ans or not.
+Solution:
+class Solution:
+    def findMin(self, nums: List[int]) -> int:
+        left = 0
+        right = len(nums) - 1
+        while left < right:
+            mid = (left + right)//2
+            if nums[mid] < nums[right]:
+                right = mid
+            elif nums[mid] > nums[right]:
+                left = mid + 1
+            else:
+                right -= 1
+        return nums[left]
