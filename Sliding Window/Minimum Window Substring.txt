@@ -1,0 +1,71 @@
+Note:
+This is a sliding window + hashmap problem.
+Here 1st we create a frequency hashmap of the target string.
+We have a window i.e a hashmap for sliding window.
+We have 2 variables i.e HAVE and NEED; HAVE will tell how many character are present
+in the current window that belongs to target and have the required no. of frequency.
+NEED will tell how many unique characters are present in the TARGET.
+with HAVE and NEED we can try comparing character count, window HASHMAPS we can 
+compare frequency of characters as we need both PRESENCE and EQUAL FREQUENCY.
+So we have a LEFT pointer initialized as 0.
+Have a res, resLen variable indicating [l, r] i.e the window indexes of a window that
+contains all the characters, resLen will be used to determine the length of window.
+Then we start the window by moving right pointer in for loop;
+Inside it
+We check if this character is present in TARGET window;
+If yes; then we increment the it's frequency in WINDOW map;
+	then we check if frequency of current character == required frequency;
+	if yes; then we increment have
+
+Then within for loop we compress the window size using a WHILE LOOP;
+If HAVE == NEED that that window is valid;
+so we run WHILE loop as long as HAVE == NEED; Inside it
+	We update our result and resLen; then
+	we get the character at left pointer i.e s[left]
+	we check if it is part of target
+	if yes; then we decrement it's frequency from WINDOW; then
+	We check if it's frequency < required frequency;
+	if yes; then we decrement HAVE -= 1
+	Increment left += 1 to compress the window by size 1.
+
+after all this; resLen != INFINITY then we have a result window;
+so we return s[left : right] where left and right are in result variable.
+
+
+Solution:
+class Solution:
+    def minWindow(self, s: str, t: str) -> str:
+        if t == "": return ""
+        
+        
+        have = 0
+        target = defaultdict(lambda: 0)
+        
+        for ch in t:
+            target[ch] += 1
+        
+        
+        window = defaultdict(lambda: 0)
+        need = len(target)
+        res, resLen = [-1, -1], float("inf")
+        left = 0
+        for right in range(len(s)):
+            char = s[right]
+            
+            if char in target:
+                window[char] += 1
+                if window[char] == target[char]:
+                    have += 1
+            
+            while have == need:
+                if (right - left + 1) < resLen:
+                    res = [left, right]
+                    resLen = (right - left + 1)
+                newchar = s[left]
+                if newchar in target: 
+                    window[newchar] -= 1
+                    if window[newchar] < target[newchar]:
+                        have -= 1
+                left += 1
+        l, r = res
+        return s[l : r+1] if resLen != float("inf") else ""

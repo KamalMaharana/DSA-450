@@ -1,0 +1,45 @@
+Note:
+This is a simple DFS solution; as it says find ALL UNIQUE PATHS so here ALL indicates
+we have to use DFS.
+So 1st get the count of available places in the grid; then start DFS on start grid
+in all 4 directions;
+During DFS, change the value of visited cell to -2 so that we can ignore it in 1 our
+BASE case of recursion.
+Start the DFS with available + 1 because START is also an available slot.
+so when calling DFS; save the current value of grid, then change it to -2; call DFS;
+after returning from DFS call, restore the current value of grid.
+Solution:
+class Solution:
+    def uniquePathsIII(self, grid: List[List[int]]) -> int:
+        available = 0
+        start = None
+        end = None
+        self.paths = 0
+        for i in range(len(grid)):
+            for j in range(len(grid[0])):
+                if grid[i][j] == 1:
+                    start = [i, j]
+                elif grid[i][j] == 0:
+                    available += 1
+        
+        def dfs(i, j, available):
+            if i < 0 or i >= len(grid) or j < 0 or j >= len(grid[0]) or grid[i][j] < 0:
+                return
+            
+            if grid[i][j] == 2 and available == 0:
+                self.paths += 1
+                return
+            
+            dirs = [[0, 1], [0, -1], [-1, 0], [1, 0]]
+            for dx, dy in dirs:
+#               Save
+                save = grid[i][j]
+                grid[i][j] = -2
+                dfs(i + dx, j + dy, available - 1)
+#               Restore
+                grid[i][j] = save
+            return
+        
+        i, j = start
+        dfs(i, j, available + 1)
+        return self.paths

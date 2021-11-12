@@ -1,0 +1,61 @@
+Note:
+As this is similar to VALID PARANTHESIS question the intuition goes to use
+STACK.
+Here the thing is Longest valid Paranthesis which can be start at any
+index of the string.
+So, we push index in stack for "(" and whenever we find the ")" then we
+we know that index at top of stack is the "(" of current ")".
+So there will be cases where we won't find the respective opening and 
+closing paranthesis for current index, so that forms our breaking point.
+Breaking Points are indexes stored in an array that don't have a 
+matching pair, so if there are BreakPoints, so there will be a VALID
+Paranthesis between 2 breakpoints.
+So we just have to find maximum distance between 2 BreakPoints.
+1 edge case while dealing with Breakpoints is that;
+For 1st breakpoint, find the distance between start of string and the
+1st breakpoint.
+For last breakpoint, find the distance between END of String i.e len(string)
+and the current BreakPoint.
+So go through the BreakPoint using a for loop and find the maximum distance between
+2 Breakpoints.
+As it's 0 based index, so append [-1] at start of BreakPoints Array and [len(s)] at 
+end of the BreakPoints Array. Because if BreakPoint is at [2] which means 0 -> 2 is 
+valid and 3 -> len(s) is valid.
+So after adding -1 and len(s) to array, we get [-1, 2, len(s)]
+SO distance between start and 2 is 2 - (-1) - 1 = 2; similar for next values in the
+BreakPoint Array.
+
+Solution: 
+class Solution:
+    def longestValidParentheses(self, s: str) -> int:
+        stack = []
+        result = 0
+        breakpoints = []
+        pairs = []
+        if len(s) < 2:
+            return 0
+        
+        for i in range(len(s)):
+            if s[i] == "(":
+                stack.append(i)
+            else:
+                if stack:
+                    start = stack.pop()
+                    pairs.append([start, i])
+                else:
+                    breakpoints.append(i)
+        for i in stack:
+            breakpoints.append(i)
+            
+        print(pairs)
+        l = len(s)
+        print(l)
+        if breakpoints:
+            breakpoints = [-1] + breakpoints + [l]
+            print(breakpoints)
+            for i in range(len(breakpoints) - 1):
+                result = max(result, breakpoints[i+1] - breakpoints[i] - 1)
+            return result
+
+        else:
+            return l

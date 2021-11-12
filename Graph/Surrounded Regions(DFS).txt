@@ -1,0 +1,61 @@
+Note: 
+This is a simple DFS on GRID.
+Here we check if there are any "O" in boundary of the grid.
+If there are any "O" in boundary, we start DFS from there and mark 
+every "O" connected to it as "*" so that we can later replace it with "O"
+again. 
+As any "O" that is connected to a Boundary "O" it cannot be replaced with
+"X", so we use "*" to denote that these places are special and it will be 
+restored back to "O".
+This solution can be written in a clean way by putting the boundary check
+inside a function as only i and j are changing.
+
+Solution:
+class Solution:
+    def solve(self, board: List[List[str]]) -> None:
+        """
+        Do not return anything, modify board in-place instead.
+        """
+        def dfs(i, j, board):
+            if i < 0 or i >= len(board) or j < 0 or j >= len(board[0]) or board[i][j] != "O":
+                return
+            board[i][j] = "*"
+            dfs(i + 1, j, board)
+            dfs(i - 1, j, board)
+            dfs(i, j + 1, board)
+            dfs(i, j - 1, board)
+        
+        i = 0
+        j = 0
+        while j < len(board[0]):
+            if board[i][j] == "O":
+                dfs(i, j, board)
+            j += 1
+        
+        i = 0
+        j = len(board[0]) - 1
+        while i < len(board):
+            if board[i][j] == "O":
+                dfs(i, j, board)
+            i += 1
+        
+        i = len(board) - 1
+        j = 0
+        while j < len(board[0]):
+            if board[i][j] == "O":
+                dfs(i, j, board)
+            j += 1
+        
+        i = 0
+        j = 0
+        while i < len(board):
+            if board[i][j] == "O":
+                dfs(i, j, board)
+            i += 1
+            
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                if board[i][j] == "O":
+                    board[i][j] = "X"
+                elif board[i][j] == "*":
+                    board[i][j] = "O"

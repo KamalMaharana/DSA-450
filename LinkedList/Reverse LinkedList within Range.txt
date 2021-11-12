@@ -1,0 +1,55 @@
+Note: 
+This is an advance application of Reverse LinkedList question.
+Remember, In Reverse LinkedList; after the operations, PREV is the new head of 
+the reversed LinkedList, and the original HEAD that started the operation will be the
+END of the LL.
+So here there are 3 cases;
+1. Left == Right; then return the HEAD
+2. Left = 1; so we don't have any PREV node whose next will point to 
+   the reversed LL; so we directly start reverseLL on OG Head given to us.
+3. This is the avg case, here 1st we keep a PREV Node which is node at LEFT - 1 index
+   So that PREV.next -> ReversedLL; Also we need to point the end of reverse LL to 
+   a Node at RIGHT + 1 index be it Node or None, we need the end of reverseLL i.e
+   the Node at Left index to point to Right + 1 index; so in function
+   "head.next = curr"
+
+
+Solution:
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def reverseBetween(self, head: Optional[ListNode], left: int, right: int) -> Optional[ListNode]:
+        if left == right: return head
+        temp = head
+        prev = None
+        count = 1
+        while count != left:
+            prev = temp
+            temp = temp.next
+            count += 1
+        
+        def reverseLL(head, right, count):
+            prev = None
+            curr = head
+            while count != right:
+                nex = curr.next
+                curr.next = prev
+                prev = curr
+                curr = nex
+                count += 1
+                
+            nex = curr.next
+            curr.next = prev
+            prev = curr
+            curr = nex
+            
+            head.next = curr
+            return prev
+        if prev != None:
+            prev.next = reverseLL(temp, right, count)
+            return head
+        else:
+            return reverseLL(temp, right, count)

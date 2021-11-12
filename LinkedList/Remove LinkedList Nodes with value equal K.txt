@@ -1,0 +1,58 @@
+Note:
+This is a simple question.
+Remove all nodes from a LL that has value == K
+So here the main point is manipulation of the LL pointer i.e the manipuldation of 
+NEXT pointer.
+Here both the solutions is O(N) TC and O(1) SC but 1st solution has 1 extra variable
+but effective SC is O(1).
+Go through the CODE to understand the solution properly
+EX:
+Input: head = [1,2,6,3,4,5,6], val = 6
+head = 1 -> 2 -> 6 -> 3 -> 4 -> 5 -> 6 -> None
+Output: [1,2,3,4,5]
+result = 1 -> 2 -> 3 -> 4 -> 5 -> None
+
+Solution:
+
+With PREV and CURR pointer (2 Pointer)
+
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def removeElements(self, head: Optional[ListNode], val: int) -> Optional[ListNode]:
+        if not head:
+            return head
+        
+        prev = ListNode(None)
+        prev.next = head
+        curr = head
+        head = prev
+        while curr:
+            while curr and curr.val == val:
+                curr = curr.next
+            prev.next = curr
+            prev = curr
+            curr = curr.next if curr else None
+        
+        return head.next
+
+
+With single pointer i.e just CURR pointer
+
+class Solution:
+    def removeElements(self, head: ListNode, val: int) -> ListNode:
+        if head == None:
+            return head
+        curr = head
+        while curr.next != None:
+            if curr.next.val == val:
+                curr.next = curr.next.next
+            else:
+                curr = curr.next
+        if head.val == val:
+            head = head.next
+        return head

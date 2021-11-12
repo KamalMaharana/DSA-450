@@ -1,0 +1,55 @@
+Note:
+Sliding Window Problem.
+Have a MAP of target and WINDOW.
+Have a window pointers of size of target string.
+1st compute for 1st window of size len(targetString)
+then check if current window map == target window map. If yes then add 0 to result
+as result is the starting index.
+remove 0th Index
+Then start window from left = 0 and right = len(target)
+Each time, add character at RIGHT in the WINDOW Map.
+Then compare both maps i.e TARGET == WINDOW; if yes then add left to result as we 
+found the anagram.
+Then we compress the window by size 1 i.e by moving left forward.
+Simultaneously move the RIGHT pointer forward as we are sliding the window.
+
+TC: O(n) + O(26) for the map.
+SC: O(p) i.e the WINDOW SIZE.
+
+Solution: 
+class Solution:
+    from collections import Counter
+    def findAnagrams(self, s: str, p: str) -> List[int]:
+        if len(p) > len(s): return []
+        result = []
+        target = defaultdict(lambda: 0)
+        window = defaultdict(lambda: 0)
+        for i in range(len(p)):
+            target[p[i]] += 1
+            window[s[i]] += 1
+        
+        if target == window:
+            result.append(0)
+        
+        if window[s[0]] > 1:
+            window[s[0]] -= 1
+        else:
+            window.pop(s[0])
+            
+        l = 1
+        r = len(p)
+        
+        while r < len(s):
+            window[s[r]] += 1
+            
+            if window == target:
+                result.append(l)
+            
+            if window[s[l]] > 1:
+                window[s[l]] -= 1
+            else:
+                window.pop(s[l])
+            
+            l += 1
+            r += 1
+        return result
