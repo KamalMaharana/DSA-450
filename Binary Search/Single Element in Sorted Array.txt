@@ -1,0 +1,33 @@
+Notes:
+It is old Amazon question. Here 1 element appears once and others appear twice.
+[1,1,2,2,3,4,4] here 3 is repeated once.
+As the array is sorted, we can use Binary Search.
+Here we can see that.
+To the left on required element, we see that 
+1st appearance in EVEN and 2nd appearance in ODD index.
+To the right of required element, we see that
+1st appearance is in ODD and 2nd appearance in in EVEN
+Arr =  [1,1,2,2,3,4,4,6,6]
+Inds = [0,1,2,3,4,5,6,7,8]
+As you can see in example, before '3' the elements end at ODD index.
+After '3', the elements end at even index.
+So we use this condition to partion our BINARY SEARCH.
+If nums[mid] = ODD and nums[mid] = nums[mid+1] OR
+   nums[mid] = EVEN and nums[mid] = nums[mid-1] 
+Then we know that LEFT half is perfect and we cannot find the required num in leftHalf.
+So left = mid + 1
+else: right = mid
+Then after all that, we get the result at nums[left]
+
+Solution:
+class Solution:
+    def singleNonDuplicate(self, nums: List[int]) -> int:
+        left = 0
+        right = len(nums) - 1
+        while left < right:
+            mid = (left + right)//2
+            if (mid%2 != 0 and nums[mid] == nums[mid - 1]) or (mid%2 == 0 and nums[mid] == nums[mid + 1]):
+                left = mid + 1
+            else:
+                right = mid
+        return nums[left]

@@ -1,0 +1,17 @@
+Notes:
+This question is similar to "Find All Duplicated in Array"
+Here we use the Array-Index-Negative method.
+We loop from 0 to N
+get index = nums[i] - 1 (0-based indexing)
+make nums[index] = - abs(nums[index]) i.e make it negative
+So after this, all the numbers that are present will become -ve as they are visited
+and all the number that remain +ve then their indexes are the DISAPPEARED values.
+
+Solution:
+class Solution:
+    def findDisappearedNumbers(self, nums: List[int]) -> List[int]:
+        for i in xrange(len(nums)):
+            index = abs(nums[i]) - 1
+            nums[index] = - abs(nums[index])
+
+        return [i + 1 for i in range(len(nums)) if nums[i] > 0]

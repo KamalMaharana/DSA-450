@@ -1,0 +1,50 @@
+Notes:
+Here we calculate the LeftMax and Right Max of every index and store them in
+respective arrays.
+The LeftMax and RightMax Array are formed my using stack.
+When we find element greater than top of stack, that means that current element is
+the greater element for value in top of stack, so until 
+while stack and stack[top] <= val: we pop and when then we know 
+if stack not empty, then top of stack is the greater element on given direction.
+We try to maintain a linearly increasing Order in the stack.
+
+Solution:
+class Solution:
+    def largestRectangleArea(self, heights: List[int]) -> int:
+#         inc = increment i.e 
+        def getMax(start, end, inc, add, init):
+            maxArray = [-1 for i in range(n)]
+            stack = []
+            for i in range(start, end, inc):
+                val = heights[i]
+                while stack and heights[stack[-1]] >= val:
+                    stack.pop()
+
+                if stack:
+                    maxArray[i] = stack[-1] + add
+                else:
+                    maxArray[i] = init
+                stack.append(i)
+            return maxArray
+        leftMax = getMax(start = 0, end = n, inc = 1, add = 1, init = 0)
+        rightMax = getMax(start = n - 1, end = -1, inc = -1, add = -1, init = n - 1)
+        result = -1
+        for i in range(n):
+            result = max(result, (rightMax[i] - leftMax[i] + 1) * heights[i])
+        return result
+    
+#     Complex Solution NOT FOR INTERVIEW
+        # n = len(heights)
+        # stack = []
+        # result = 0
+        # for i in range(n+1):
+        #     while stack and (i == n or heights[stack[-1]] >= heights[i]):
+        #         height = stack[-1]
+        #         stack.pop()
+        #         if len(stack) == 0:
+        #             width = i
+        #         else:
+        #             width = i - stack[-1] - 1
+        #         result = max(result, width * height)
+        #     stack.append(i)
+        # return result

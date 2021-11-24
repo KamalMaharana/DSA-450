@@ -1,0 +1,31 @@
+Notes:
+This is BINARY SEARCH on Answer problem.
+REMEMBER the LessEQ Function.
+The 1st function i.e lessEq will do the following
+Given a  number X, it will return number of values in the table that are less than
+current number.
+Then we apply Binary Search on answer as because possible answers are 1 to m*n
+So left = 1, right = m*n
+then we get MID and we check 
+If there are more than equal to K values that are a less than MID:
+if yes then we found 1 possible answer we save it in ANSWER and check for lower half
+	right = mid - 1
+else: as there are less than K value for MID, so we need to search in upper half.
+	left = mid + 1
+
+then finally after while loop we get the answer.
+
+Solution:
+class Solution:
+    def findKthNumber(self, m: int, n: int, k: int) -> int:
+        def lessEq(x):
+            return sum([min(x//i, n) for i in range(1, m+1)]) >= k
+        
+        beg, end = 1, m*n
+        while beg < end:
+            mid = (beg + end)//2
+            if not lessEq(mid):
+                beg = mid + 1
+            else:
+                end = mid
+        return beg

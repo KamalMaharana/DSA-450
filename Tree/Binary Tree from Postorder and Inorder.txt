@@ -1,0 +1,35 @@
+Notes:
+This is exact similar to Binary Tree from Pre and IN.
+In this, we know that last value of POSTORDER Array will be the root.
+As POSTORDER is LEFT -> RIGHT -> ROOT.
+So here we POP from back of POSTORDER array, and look for it's index in INORDER.
+As we know that in INORDER, 
+	Values to left form LEFT SUBTREE
+	Values to RIGHT form RIGHT SUBTREE
+So as we FIND the POPPED value in INORDER as it will be our root for current iteration
+Then we recursively call for formation of RIGHT and LEFT SUBTREE for current NODE.
+Remember the order because it is essentially is the difference in POST and PRE to form
+the TREE.
+Here after root, the LAST ELEMENT of POSTORDER will be the root of RIGHT SUBTREE.
+So 1st we form the RIGHT SUBTREE, then we FORM the LEFT SUBTREE.
+As we are GLOBALLY accesing the POSTORDER and POPPING out values from back,
+so if we mess with the order then There might be a case where the POPPED value is not
+in the INORDER we have.
+So in recursive calls we just use [index + 1 to END] of INORDER for RIGHT SUBTREE
+And [0 to index - 1] for LEFT SUBTREE.
+
+Solution:
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def buildTree(self, inorder: List[int], postorder: List[int]) -> Optional[TreeNode]:
+        if inorder:
+            index = inorder.index(postorder.pop())
+            root = TreeNode(inorder[index])
+            root.right = self.buildTree(inorder[index + 1: ], postorder)
+            root.left = self.buildTree(inorder[ : index], postorder)
+            return root

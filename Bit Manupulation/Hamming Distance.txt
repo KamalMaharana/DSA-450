@@ -1,0 +1,23 @@
+Notes:
+Here n = x ^ y will give all the bits that are different coz it's XOR operation.
+Then n = n & (n - 1) This will reduce the set bits.
+x = 7, y = 2
+n = 5
+n = n & (n-1) then 5 & 4
+101
+100 = 100 = 4 
+Then same
+n = n & (n-1) then 4 & 3
+100
+011 = 000 = 0, 
+As you see, there were 2 diff bit between 7 and 2, so the while loop ran 2 times
+because of n & (n - 1) which will reduce the set bits 1 by 1.
+Solution:
+class Solution:
+    def hammingDistance(self, x: int, y: int) -> int:
+        dis = 0
+        n = x ^ y
+        while n:
+            dis += 1
+            n = n & (n - 1)
+        return dis

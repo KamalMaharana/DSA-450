@@ -1,0 +1,55 @@
+Notes:
+You are given two lists of closed intervals, firstList and secondList, 
+where firstList[i] = [starti, endi] and secondList[j] = [startj, endj]. 
+Each list of intervals is pairwise disjoint and in sorted order.
+
+firstList = [[0,2],[5,10],[13,23],[24,25]], 
+secondList = [[1,5],[8,12],[15,24],[25,26]]
+Output: [[1,2],[5,5],[8,10],[15,23],[24,24],[25,25]]
+
+Approach:
+As this is a INTERvAL question, then we need to sort it.
+But it is already sorted, so we move to next step that is SELECTION and Placing them.
+So here we need to use TWO-POINTER technique.
+1 pointing to firstList, 1 pointing to secondList
+i, j = 0, 0
+So now we iterate till we reach the END of any of the list.
+In each iteration, we get 2 pairs to compare
+ex:
+a = [0,2]; b = [1,5]
+So for Intersection = [MAX(start1, start2), MIN(end1, end2)]
+So for above values
+max(0, 1) = 1 and min(2, 5) = 2
+So intersection = [1,2]
+We add it to result.
+We found the intersections between a and b,
+Now the question is which pointer to move?
+So we move the pointer that has the SMALLEST end.
+We compare the end of both the intervals, and move the pointer based on it.
+So in a,b we see end1 = 2 and end2 = 5.
+As end1 < end2; we increment "i" that is pointer of 1st list.
+Else we would have moved "j" i.e the pointer of 2nd list.
+
+Code is self-explanatory, go through it to understand the approach easily.
+
+Solution:
+class Solution:
+    def intervalIntersection(self, A: List[List[int]], B: List[List[int]]) -> List[List[int]]:
+        a = A
+        b = B
+        output = list()
+        i = 0
+        j = 0
+        while(i < len(a) and j < len(b)):
+            aStart, aEnd = a[i][0], a[i][1]
+            bStart, bEnd = b[j][0], b[j][1]
+            start = max(aStart, bStart)
+            end = min(aEnd, bEnd)
+            if start <= end:
+                output.append([start,end])
+            if aEnd < bEnd:
+                i += 1
+            else:
+                j += 1
+        
+        return output

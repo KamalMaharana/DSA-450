@@ -1,0 +1,33 @@
+Note:
+LeetCode 135
+Here as we have to take care of neighbours and for every element we have to check their
+neighbours, we use 2 pass.
+As we have to give alteast 1 candy to everyone so 
+we initialize the result array with all 1.
+1 for left neighbour, 1 for right neighbour.
+Go from left to right and while increase, give the the next person +1 candy 
+from previous, if not, leave number of candies as it was. 
+In this way when we make this pass we make sure that condition that person 
+with bigger value gets more candies fulfilled for pairs of adjusent persons where 
+left person is smaller than right. 
+Now, go from right to left and do the same: now we cover pairs of adjacent persons 
+where right is smaller than left. 
+After these two passes all persons are happy.
+
+Solution:
+class Solution:
+    def candy(self, ratings: List[int]) -> int:
+        Candies = [1 for i in ratings]
+        
+        # Scan from left to right, to make sure right higher rated child gets 1 more candy than left lower rated child
+        for i in range(1, len(ratings)):
+            if ratings[i] > ratings[i - 1]:
+                Candies[i] = Candies[i - 1] + 1
+        
+        # Scan from right to left, to make sure left higher rated child gets 1 more candy than right lower rated child
+        for i in range(len(ratings) - 1, 0, -1):
+            if ratings[i - 1] > ratings[i]:
+                Candies[i - 1] = max(Candies[i] + 1, Candies[i - 1])
+        
+        result = sum(Candies)
+        return result

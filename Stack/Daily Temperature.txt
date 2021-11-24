@@ -1,0 +1,28 @@
+Notes:
+This question is similar to Next Greater Element.
+Here we have a stack and try to maintain descinding order i.e Small at TOP of STACK
+and BIG at the bottom.
+We store index instead of values in stack.
+Whenever we find a value > stack[top]; we pop and while poping
+We know that "value" is the next greater element for number at top of stack, so we
+instead of creating a new result array, we just modify the given array.
+Here we need to find the difference in index between curr and it's next greater element
+so when we find the N-G-E, as we are storing index in stack the difference is
+nums[idx] = curr_index - stack[idx]
+
+
+Solution:
+class Solution:
+    def dailyTemperatures(self, temperatures: List[int]) -> List[int]:
+        stack = []
+        for i in range(len(temperatures)):
+            val = temperatures[i]
+            while stack and temperatures[stack[-1]] < val:
+                index = stack.pop()
+                temperatures[index] = i - index
+            
+            stack.append(i)
+        while stack:
+            index = stack.pop()
+            temperatures[index] = 0
+        return temperatures

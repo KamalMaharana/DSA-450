@@ -1,3 +1,38 @@
+Notes:
+In this, if we go top down, we find that when we start the search from
+grid[row][col]; then we can reach this position either from TOP and RIGHT
+i.e (row-1, col) and (row, col - 1).
+This forms our recursion.
+Our Base Case would be if we go out of bounds then return 0 as there are no way to
+reach the END if we start from OUT_OF_BOUND position.
+Next Base Case id if we reach (0, 0), then here we know that if there is 1 way to
+reach (0, 0) i.e if we start at that point then it will be counted as a way/path to
+reach that point i.e (0, 0).
+We use DP as dictionary which stores (i, j) as key for caching.
+Conversion from rec + mem to Bottom-Up is simple.
+
+Solution:
+# Recursion + Memoization
+class Solution:
+    def uniquePaths(self, row: int, col: int) -> int:
+        def isValid(i, j, row, col):
+            return 0 <= i < row and 0 <= j < col
+        
+        dp = {(0, 0): 1}
+        def dfs(i, j, row, col):
+            if isValid(i, j, row, col): 
+                if (i, j) in dp: return dp[(i, j)]
+                
+                dp[(i, j)] = dfs(i-1, j, row, col) + dfs(i, j - 1, row, col)
+                return dp[(i, j)]
+            else:
+                return 0
+        
+        dfs(row - 1, col - 1, row, col)
+        return dp[(row - 1, col - 1)]
+
+
+# Tabular DP
 class Solution:
     def uniquePaths(self, m: int, n: int) -> int:
         grid = [[1 for i in range(m)] for j in range(n)]
