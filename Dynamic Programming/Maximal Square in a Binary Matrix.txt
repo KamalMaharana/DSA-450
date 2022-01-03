@@ -1,0 +1,55 @@
+221. Maximal Square
+Given an m x n binary matrix filled with 0's and 1's, 
+find the largest square containing only 1's and return its area.
+
+Input: matrix = [["1","0","1","0","0"],
+				 ["1","0",1,1,"1"],
+				 ["1","1",1,1,"1"],
+				 ["1","0","0","1","0"]]
+Output: 4
+In the above matrix,
+square with side = 2 is possible and area of it is 2 ** 2 = 4
+
+Approach:
+REMEMBER; Maximal Rectangle is Largest Area of Histogram variation which is solved using STACK.
+This is a DP Problem.
+Here we get the maximum length based on the surrounding
+Eg:
+1 1  
+1 x   
+So when we evaluating 'x' i.e bottom right of a square, we check if left, top and diagnol are also 1.
+If any of the left, top, diagnol are 0, then we know that a SQUARE cannot be formed.
+Also, in above square, to check if left, top, diagnol are 1, we use minimum of all 3 directions.
+min(left, top, diagnol)
+i.e min(mat[i][j - 1], mat[i - 1][j], mat[i - 1][j - 1])
+And we know if the current value == 1, then minimum size = 1, so our final formula of DP is:
+if matrix[i][j] == "1":
+dp[i][j] = 1 + min(mat[i][j - 1], mat[i - 1][j], mat[i - 1][j - 1])
+side = max(side, dp[i][j])
+
+keeping track of 'side' length to find the maximum area.
+
+Solution:
+class Solution:
+    def maximalSquare(self, matrix: List[List[str]]) -> int:
+        row, col = len(matrix), len(matrix[0])
+        dp = [[0 for j in range(col)] for i in range(row)]
+        side = 0
+        for i in range(row):
+            if matrix[i][0] == "1":
+                dp[i][0] = 1
+                side = 1
+        
+        for j in range(col):
+            if matrix[0][j] == "1":
+                dp[0][j] = 1
+                side = 1
+        
+        
+        for i in range(1, row):
+            for j in range(1, col):
+                if matrix[i][j] == "1":
+                    dp[i][j] = 1 + min(dp[i][j-1], dp[i-1][j], dp[i-1][j-1])
+                    side = max(side, dp[i][j])
+        area = side ** 2
+        return area

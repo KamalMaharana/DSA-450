@@ -1,15 +1,46 @@
-public boolean canPartition(int[] arr) {
+Question 416:
+Given a non-empty array nums containing only positive integers, 
+find if the array can be partitioned into two subsets such that 
+the sum of elements in both subsets is equal.
+
+Input: nums = [1,5,11,5]
+Output: true
+Explanation: The array can be partitioned as [1, 5, 5] and [11].
+
+Input: nums = [1,2,3,5]
+Output: false
+Explanation: The array cannot be partitioned into equal sum subsets.
+
+Approach:
+This is just a variation of Subset Sum problem.
+Here as we have to divide the array in 2 parts where
+sum of all elements in both part is equal.
+That means sum of each part = sum(array) / 2
+For this to happen; the total sum = EVEN coz ODD value cannot be divided into 2 parts.
+So this comes down to:
+Find a Subset with target = sum(array) / 2 in the given array.
+So apply the Subset Sum logic.
+Written in NOTES
+
+
+Solution:
+class Solution {
+    public boolean canPartition(int[] arr) {
         int sum = 0;
         int N = arr.length;
         for(int i = 0; i < N; i++) {
             sum += arr[i];
         }
-        if((sum&1) == 1) {
+        
+        // If SUM is ODD, return FALSE coz ODD sum cannot be partioned in 2 equal parts
+        if((sum%2) == 0) {
             return false;
         }
         sum = sum/2;
         boolean dp[][] = new boolean[N+1][sum+1];
         
+        // From here
+        // It is same as SUBSET SUM
         // Initialization
         for(int i = 0; i < N + 1; i++) {
             for(int j = 0; j < sum + 1; j++) {
@@ -35,3 +66,4 @@ public boolean canPartition(int[] arr) {
         }
         return dp[N][sum];
     }
+}

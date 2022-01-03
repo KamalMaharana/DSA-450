@@ -1,0 +1,37 @@
+Notes:
+There is one meeting room in a firm. There are N meetings in the 
+form of (start[i], end[i]) where start[i] is start time of meeting 
+i and end[i] is finish time of meeting i.
+What is the maximum number of meetings that can be accommodated 
+in the meeting room when only one meeting can be held in the meeting room 
+at a particular time?
+
+Note: Start time of one chosen meeting can't be equal to the end time of the other chosen meeting.
+
+Input:
+N = 6
+start[] = {1,3,0,5,8,5}
+end[] =  {2,4,6,7,9,9}
+
+Approach:
+This is a greedy solution.
+Sort the pair based on ending time.
+And check for all the meetings that has start > previous end.
+Does increase the ans accordingly.
+
+Solution:
+class Solution:
+    def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int:
+        if sum(gas) < sum(cost):
+            return -1
+        gas_tank, start_index = 0, 0
+        
+        for i in range(len(gas)):
+            gas_tank += gas[i] - cost[i]
+            
+            if gas_tank < 0:
+                start_index = i+1
+                gas_tank = 0
+            
+        return start_index
+        

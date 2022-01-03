@@ -1,0 +1,103 @@
+Notes:
+85. Maximal Rectangle
+Given a rows x cols binary matrix filled with 0's and 1's, 
+find the largest rectangle containing only 1's and return its area.
+
+Input: matrix = [["1","0","1","0","0"],
+		 ["1","0","1","1","1"],
+		 ["1","1","1","1","1"],
+		 ["1","0","0","1","0"]]
+Output: 6
+
+Approach:
+Here we use same concept and same code that we used for "Largest Area Histogram"
+Here we calculate the Max Area From 1st row till last row and return maximum among 
+them.
+Here as we go from TOP to BOTTOM, we add the "1" from previous row.
+This is like increasing the height of the histogram.
+So if in between, we encounter "0", then this means the histogram broke and will again
+start from 0.
+Below is example of Summation of Rows
+
+[["1","0","1","0","0"],     [1,0,1,0,0]
+ ["1","0","1","1","1"], =>  [2,0,2,1,1]
+ ["1","1","1","1","1"],     [3,1,3,2,2]
+ ["1","0","0","1","0"]]     [4,0,0,3,0]
+
+Here,
+1. Get curr_height_array and Area of 1st ROW.
+2. Then from 2nd row till last row
+	2.1: prev_height_array = curr_height_array
+	2.2: iterae over current ROW, i.e 'j' loop of matrix
+		2.3: If matrix[i][j] = 0; then keep it as it is and goto 2.5
+		2.4: If matrix[i][j] = 1; then matrix[i][j] = prev_height[j] + 1
+	2.5: curr_height_array = matrix[i]
+	2.6: Get Max Historgram of curr_height_array
+	2.7: result = max(result, curr_result)
+
+Solution:
+class Solution:
+    def maxHistogram(self, heights):
+        def getLeftMinArray(heights):
+            n = len(heights)
+            minArray = [0] * n
+            stack = [] # It will store INDEXES; not Values
+            for i in range(n):
+                curr_height = int(heights[i])
+                while stack and curr_height <= int(heights[stack[-1]]):
+                    stack.pop()
+                
+                if stack:
+                    minArray[i] = stack[-1] + 1
+                else:
+                    minArray[i] = 0
+                
+                
+                stack.append(i)
+            return minArray
+        def getRightMinArray(heights):
+            n = len(heights)
+            minArray = [0] * n
+            stack = [] # It will store INDEXES; not Values
+            for i in range(n - 1, -1, -1):
+                curr_height = int(heights[i])
+                while stack and curr_height <= int(heights[stack[-1]]):
+                    stack.pop()
+                
+                if stack:
+                    minArray[i] = stack[-1] - 1
+                else:
+                    minArray[i] = n - 1
+                
+                
+                stack.append(i)
+            return minArray
+        
+        leftMinArray = getLeftMinArray(heights)
+        rightMinArray = getRightMinArray(heights)
+        result = 0
+        for i in range(len(heights)):
+            width = rightMinArray[i] - leftMinArray[i] + 1
+            height = int(heights[i])
+            area = width * height
+            result = max(result, width * height)
+        return result
+            
+    def maximalRectangle(self, matrix: List[List[str]]) -> int:
+        if not matrix or len(matrix) == 0:
+            return 0
+        
+        height = matrix[0]
+        result = self.maxHistogram(height)
+        for i in range(1, len(matrix)):
+            prev_height = height
+            for j in range(len(matrix[0])):
+                if matrix[i][j] != 0 and matrix[i][j] != "0":
+                    matrix[i][j] = int(prev_height[j]) + 1
+                else:
+                    matrix[i][j] = 0
+            
+            height = matrix[i]
+            result = max(result, self.maxHistogram(height))
+        
+        return result

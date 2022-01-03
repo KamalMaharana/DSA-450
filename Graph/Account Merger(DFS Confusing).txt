@@ -1,0 +1,114 @@
+Notes:
+Given a list of accounts where each element accounts[i] is a list of strings, 
+where the first element accounts[i][0] is a name, and the rest of the elements are 
+emails representing emails of the account.
+
+Now, we would like to merge these accounts. Two accounts definitely belong to the 
+same person if there is some common email to both accounts. 
+Note that even if two accounts have the same name, they may belong to different 
+people as people could have the same name. 
+A person can have any number of accounts initially, but all of their accounts 
+definitely have the same name.
+
+After merging the accounts, return the accounts in the following format: 
+the first element of each account is the name, and the rest of the elements are 
+emails in sorted order. The accounts themselves can be returned in any order.
+
+Approach:
+This is effectively a DisJoint Set problem that uses Union-Find.
+But as this is MEDIUM in LeetCode, we need to use BFS or DFS.
+So we can solve this using DFS, because here there is a confusing pattern 
+mapping/connections between entities like node-edges in a graph connection.
+The main points here are:
+1. Form graph on EMAIL instead of NAME of the account
+2. Use GLOBAL Visited array because you only need to traverse a ACCOUNT only ONCE.
+3. We have visited on ACCOUNT INDEXES, but we the neighbours are based on the EMAIL
+   Graph. i.e, here NODES in DFS are indexes, but in graph we formed, the nodes are
+   EMAIL.
+4. Here the confusion is to form the graph and choose NODE and MAPPING
+
+So here we form a graph:
+Node(Key): 		Email-id
+Neighbour(Value): 	List of Account Indexes that have this EMAIL
+
+After this, we run DFS on all the account indexes.
+On DFS(account_index, email_set):
+1. Check in visited; if yes then return else got 2
+2. Mark this account_index as visited
+3. Go through all the emails that this account has using for loop
+	Check if email[i] in email_set; If YES then skip current iteration using 
+	CONTINUE statement; else goto 4
+4. Add email[i] to email_set
+5. Then go through the list of accounts that has email[i]; we can find this using
+   the GRAPH that we formed.
+6. Then on each accout associated with email[i], call a DFS on it.
+7. Repeat 4 to 6 until we traverse all the Email-ids of current account.
+
+At the end we will receive a email-set that will consist of all the email associted
+with account with account_index = 'i'
+So just add name and emails associated with this account to result
+Remember to sort the email_set before adding to answer as this is the requirements.
+Solution:
+class Solution:
+    def accountsMerge(self, accounts: List[List[str]]) -> List[List[str]]:
+        from collections import defaultdict
+        visited_accounts = [False] * len(accounts)
+        emails_accounts_map = defaultdict(list)
+        res = []
+        
+        
+        # Build up the graph.
+        """
+        We give each account an ID, based on the index of it within the list of accounts.
+
+        [
+          ["John", "johnsmith@mail.com", "john00@mail.com"],        # Account 0
+          ["John", "johnnybravo@mail.com"],                         # Account 1
+          ["John", "johnsmith@mail.com", "john_newyork@mail.com"],  # Account 2
+          ["Mary", "mary@mail.com"]                                 # Account 3
+        ]
+        
+        emails_accounts_map of email to account ID
+        This is the Graph
+        
+        {
+          "johnsmith@mail.com": [0, 2],
+          "john00@mail.com": [0],
+          "johnnybravo@mail.com": [1],
+          "john_newyork@mail.com": [2],
+          "mary@mail.com": [3]
+        }
+        
+        Here VISITED is global and not the backtracking is because, we need to visit every account just once
+        And in that 1 go, we need to find all the emails linked to it.
+        """
+        for i, account in enumerate(accounts):
+            for j in range(1, len(account)):
+                email = account[j]
+                emails_accounts_map[email].append(i)
+        
+        # DFS code for traversing accounts.
+        def dfs(i, emails, prev = None):
+            # print(prev, emails, i, visited_accounts)
+            if visited_accounts[i]:
+                return
+            visited_accounts[i] = True
+            
+            # Iterate over all the email i.e from index 1 to END in account list
+            for j in range(1, len(accounts[i])):
+                email = accounts[i][j]
+                if email in emails:
+                    continue
+                emails.add(email)
+                for neighbor in emails_accounts_map[email]:
+                    dfs(neighbor, emails, i)
+                    
+        # Perform DFS for accounts and add to results.
+        for i, account in enumerate(accounts):
+            if visited_accounts[i]:
+                continue
+            name, emails = account[0], set()
+            dfs(i, emails)
+            res.append([name] + sorted(emails))
+        # print(dict(emails_accounts_map))
+        return res

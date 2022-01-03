@@ -1,0 +1,77 @@
+1026. Maximum Difference Between Node and Ancestor
+Given the root of a binary tree, find the maximum value v for 
+which there exist different nodes a and b where v = |a.val - b.val| and a is an ancestor of b.
+
+A node a is an ancestor of b if either: any child of a is equal to b or any child of a is an ancestor of b.
+
+
+Input: root = [8,3,10,1,6,null,14,null,null,4,7,13]
+Output: 7
+Explanation: We have various ancestor-node differences, some of which are given below :
+|8 - 3| = 5
+|3 - 7| = 4
+|8 - 1| = 7
+|10 - 13| = 3
+Among all possible differences, the maximum value of 7 is obtained by |8 - 1| = 7.
+
+Input: root = [1,null,2,null,0,3]
+Output: 3
+
+Approach:
+Here we need to keep a GLOBAL variable that will hold the Maximum Difference.
+As our result can be anywhere in the TREE, so that's where we need GLOBAL variable.
+
+So from Bottom-up i.e from leaf to root, we keep track of MAX and MIN which will denote
+MAX: maximum value from below.
+MIN: minimum value from below.
+
+So our answer will be either onw of these as we require ABSOLUTE difference
+possible1 = abs(curr_val - maxi)
+possible2 = abs(curr_val - mini)
+
+So answer could be
+self.result = max(self.result, possible1, possible2)
+
+Here as the values could be 0, so in our base case we cannot return [0, 0] coz this will mess our answer
+So when if there is no left child or no right child for a given node we take:
+		leftMax, leftMin = [node.val, node.val] 
+		and
+		rightMax, rightMin = [node.val, node.val]
+		
+Thus after DFS call, we will get the maximum difference in self.result
+
+Solution:
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def maxAncestorDiff(self, root: Optional[TreeNode]) -> int:
+        self.result = float("-inf")
+        def dfs(node):
+            if not node.left and not node.right:
+                return [node.val, node.val]
+            
+            if node.left:
+                leftMax, leftMin = dfs(node.left)
+            else:
+                leftMax, leftMin = [node.val, node.val]
+            
+            if node.right:
+                rightMax, rightMin = dfs(node.right)
+            else:
+                rightMax, rightMin = [node.val, node.val]
+            maxi = max(leftMax, rightMax)
+            mini = min(leftMin, rightMin)
+            val = node.val
+            a = abs(val - maxi)
+            b = abs(val - mini)
+            self.result = max(self.result, a, b)
+            maxi = max(maxi, node.val)
+            mini = min(mini, node.val)
+            return [maxi, mini]
+        
+        dfs(root)
+        return self.result

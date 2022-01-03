@@ -1,0 +1,61 @@
+Notes:
+Given an m x n integers matrix, return the length of the longest increasing path 
+in matrix.
+
+From each cell, you can either move in four directions: 
+left, right, up, or down. 
+You may not move diagonally or move outside the boundary 
+(i.e., wrap-around is not allowed).
+
+Input: matrix = [[9,9,4],
+		 [6,6,8],
+		 [2,1,1]]
+
+Output: 4
+Explanation: The longest increasing path is [1, 2, 6, 9].
+
+Approach:
+Here the BRUTE force is to start DFS call on every number in the matrix.
+In DFS Spread, we check in all 4 directions and spread the DFS in those directions if
+value at next index > value at current index
+i.e when matrix[new_x][new_y] > matrix[x][y]
+After the DFS calls will be over when we reach a boundary element from where we cannot
+find and neighbour that is greater than current element.
+At invalid index we won't even go to DFS call, so always we end at the boundary element
+So, every element is a INCREASING PATH of length 1, so 
+We return [max(from all 4 direction) + 1], 1 is for including current element in path
+length.
+We need to use DP here to optimize the recursion as we are calculating some values
+repeatedly.
+So using dictionary of tuples as cache.
+
+
+Solution:
+class Solution:
+    def longestIncreasingPath(self, matrix: List[List[int]]) -> int:
+        directions = [[1,0], [-1, 0], [0, 1], [0, -1]]
+        row = len(matrix)
+        col = len(matrix[0])
+        dp = {}
+        def isValid(i, j, row, col):
+            return 0 <= i < row and 0 <= j < col
+        
+        def dfs(i, j):
+            maxi = 0
+            if (i, j) in dp: 
+                return dp[(i, j)]
+            for d in directions:
+                x, y = i + d[0], j + d[1]
+                if isValid(x, y, row, col) and matrix[i][j] < matrix[x][y]:
+                    maxi = max(maxi, dfs(x, y))
+            dp[(i, j)] = maxi + 1
+            return dp[(i, j)]
+            
+            
+        
+        result = 0
+        for i in range(row):
+            for j in range(col):
+                path = dfs(i, j)
+                result = max(path, result)
+        return result

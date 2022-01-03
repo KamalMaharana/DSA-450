@@ -1,0 +1,62 @@
+Notes:
+Given the root of a binary tree, flatten the tree into a "linked list":
+
+The "linked list" should use the same TreeNode class where the right child pointer 
+points to the next node in the list and the left child pointer is always null.
+The "linked list" should be in the same order as a pre-order traversal of the 
+binary tree.
+
+Approach:
+Here this is RIGHT -> LEFT -> ROOT;
+Main thing is to keep track of PREV because we need it to change the directions.
+Because when we need to get a node from LEFT Subtree to point a Node in RIGHT SUBTREE
+We require to keep track of PREV node.
+
+      1                        1
+     / \                      / \
+    2   5          =>       None 2
+   / \   \                      / \
+  3   4   6                   None 3
+                                  / \
+                                None 4
+                                    / \
+                                  None 5
+                                      / \
+                                    None 6  
+
+Here, 
+We go 6,5,4,3,2,1 in this order as per RIGHT -> LEFT -> ROOT.
+At 6, prev = None, so right and left = None; prev = 6
+At 5, prev = 6, so node(5).right = 6; prev = 5
+Then we reach 4 due to recursion;
+At 4, prev = 5, so node(4).right = 5; prev = 4
+At 3, prev = 4, so node(3).right = 4; prev = 3
+At 2, prev = 3, so node(2).right = 3; prev = 2
+At 1, prev = 2, so node(1).right = 2; prev = 1
+
+And on every iteration, we turn NODE.left = None.
+
+Solution:
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def flatten(self, root: TreeNode) -> None:
+        """
+        Do not return anything, modify root in-place instead.
+        """
+        self.prev = None
+        def reversePostOrder(node):
+            if not node: return
+            
+            reversePostOrder(node.right)
+            reversePostOrder(node.left)
+            node.right = self.prev
+            node.left = None
+            self.prev = node
+            return
+        
+        reversePostOrder(root)

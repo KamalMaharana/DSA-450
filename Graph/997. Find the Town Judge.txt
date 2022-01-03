@@ -1,0 +1,58 @@
+997. Find the Town Judge
+In a town, there are n people labeled from 1 to n. There is a rumor that one of these people is secretly the town judge.
+
+If the town judge exists, then:
+
+1. The town judge trusts nobody.
+2. Everybody (except for the town judge) trusts the town judge.
+3. There is exactly one person that satisfies properties 1 and 2.
+
+You are given an array trust where trust[i] = [ai, bi] representing that the person labeled ai trusts the person labeled bi.
+
+Return the label of the town judge if the town judge exists and can be identified, or return -1 otherwise.
+
+Example 1:
+
+Input: n = 2, trust = [[1,2]]
+Output: 2
+Example 2:
+
+Input: n = 3, trust = [[1,3],[2,3]]
+Output: 3
+Example 3:
+
+Input: n = 3, trust = [[1,3],[2,3],[3,1]]
+Output: -1
+
+
+Approach:
+Here we need to use GRAPH as there is mapping of 2 people trusting.
+So here as JUDGE trusts nobody, which means there is no out-degree for JUDGE.
+Everybody trusts the JUDGE except the JUDGE trusting himself;
+This means that there are N - 1 outgoing edges i.e in-degree of JUDGE.
+So by noting the above points,
+we can use a LIST as our GRAPH where index i will denote i'th person
+As the persons are in 1-index, so we convert it to 0-index.
+We do +1 for incoming edge and -1 for outgoing edge we do -1
+We call our graph as trusted_by, where each value will denote the number of people trusting current node
+So in every trust_pair we get 2 people a, b such that:
+a trusts b
+trusted_by[a] -= 1 //Denoting that it's outgoing edge
+trusted_by[b] += 1 //Denoting incoming edge
+
+So after preparing the graph, we know that whoever is trusted by N - 1 people is the JUDGE
+so run a loop and check for it, if found then return it.
+After loop is completed, we didn't find any JUDGE, so return -1
+
+Solution:
+class Solution:
+    def findJudge(self, n: int, trust: List[List[int]]) -> int:
+        trusted_by = [0] * n
+        for a, b in trust:
+            [a - 1] -= 1
+            trusted_by[b - 1] += 1
+        
+        for i in range(n):
+            if trusted_by[i] == n - 1:
+                return i + 1
+        return -1

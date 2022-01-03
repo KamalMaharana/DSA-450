@@ -1,0 +1,90 @@
+210. Course Schedule II
+There are a total of numCourses courses you have to take, labeled from 0 to numCourses - 1. 
+You are given an array prerequisites where prerequisites[i] = [ai, bi] 
+indicates that you must take course bi first if you want to take course ai.
+
+For example, the pair [0, 1], indicates that to take course 0 you have to first take course 1.
+Return the ordering of courses you should take to finish all courses. 
+If there are many valid answers, return any of them. 
+If it is impossible to finish all courses, return an empty array.
+
+
+Example 1:
+
+Input: numCourses = 2, prerequisites = [[1,0]]
+Output: [0,1]
+Explanation: 
+There are a total of 2 courses to take. 
+To take course 1 you should have finished course 0. 
+So the correct course order is [0,1].
+
+
+Example 2:
+
+Input: numCourses = 4, prerequisites = [[1,0],[2,0],[3,1],[3,2]]
+Output: [0,2,1,3]
+Explanation: There are a total of 4 courses to take. To take course 3 you should have finished both courses 1 and 2. Both courses 1 and 2 should be taken after you finished course 0.
+So one correct course order is [0,1,2,3]. Another correct ordering is [0,2,1,3].
+Example 3:
+
+Input: numCourses = 1, prerequisites = []
+Output: [0]
+
+Approach:
+Remember, Course Schedule question is TOPOLOGICAL SORTING question.
+Topological Sorting can only be performed on ACYCLIC Graphs.
+So here we can divide the problem in this flow:
+1. Check if there is a cycle in graph: if yes, then return []; else goto 2
+2. Perform Topological Sort and return the stack that we use in this TOPOLOGICAL SORTING.
+Return Stack in reverse order.
+
+As this is a 2 step process and both using DFS, we can cleverly merge them into 1.
+We know that in CYCLE detection, the path that we choose matters the most
+In this graph:
+1 -> 3 <- 2
+We can have following DFS paths:
+1 -> 3 & 2 -> 3
+here we are visiting 3 twice, but remember that both are different path, so there ain't no cycle in here.
+
+So to do this, we use visited array of 0,1,2
+0: Not Visited
+1: Visited in Current Path; can be visited again in different path.
+2: Visited Completely
+
+
+So when we append the value to the STACK, we also make the visited[node] = 2;
+To say that "node" has been visited completely and it will not take part in any other paths.
+
+Solution:
+class Solution:
+    def findOrder(self, numCourses: int, prerequisites: List[List[int]]) -> List[int]:
+        graph = defaultdict(lambda: [])
+        for v, u in prerequisites:
+            graph[u].append(v)
+        
+        visited = [0] * numCourses
+        stack = []
+        self.foundCycle = False
+        
+        def dfs(node):
+            
+            if self.foundCycle:
+                return
+            if visited[node] == 1:
+                self.foundCycle = True
+                return
+            if visited[node] == 0:
+                visited[node] = 1
+                
+                for neig in graph[node]:
+                    dfs(neig)
+                visited[node] = 2
+                stack.append(node)
+        
+        
+        for i in range(0, numCourses):
+            if self.foundCycle: return []
+            if visited[i] == 0:
+                dfs(i)
+        
+        return stack[::-1] if not self.foundCycle else []

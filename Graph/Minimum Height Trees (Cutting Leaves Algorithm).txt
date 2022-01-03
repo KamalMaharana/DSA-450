@@ -1,0 +1,77 @@
+310. Minimum Height Trees:
+
+A tree is an undirected graph in which any two vertices are connected by exactly one path. 
+In other words, any connected graph without simple cycles is a tree.
+
+Given a tree of n nodes labelled from 0 to n - 1, and 
+an array of n - 1 edges where edges[i] = [ai, bi] indicates 
+that there is an undirected edge between the two nodes ai and bi in the tree, 
+you can choose any node of the tree as the root. When you select a node x as the root, the result tree has height h. Among all possible rooted trees, those with minimum height (i.e. min(h))  are called minimum height trees (MHTs).
+
+Return a list of all MHTs' root labels. You can return the answer in any order.
+
+The height of a rooted tree is the number of edges on the longest downward path between the root and a leaf.
+
+Approach: 
+Here we need to find the root of a graph and the root should be such that the HEIGHT OF THE TREE 
+from that ROOT to LEAF should be Minimum.
+In short, we need to find the MIDDLE vertices, or Central Nodes that
+In graph like this:
+1 - 2 - 3 - 4 - 5
+If we take 3 as ROOT, then
+      3
+	| | |
+	1 4 2
+	  |
+	  5
+This is the minimu height possible of this graph if and only if we take 3 as ROOT
+At the most there could be 2 such possible ROOT candidates.
+In general, we need to find the mid,
+This could be done by eliminating the LEAVES layer by layer.
+
+BFS
+
+Like level order traversal or like ROTTEN ORANGES, here we go level by level.
+1st we eliminate the leaves,
+then after removal, new nodes with 1 neighbour will become leaves because we removed their other
+neighbour as it was a leaf in previous iteration.
+So, leaves are such nodes who adjacency list length == 1
+len(graph[node]) == 1: it's a leaf, because it is connected to only 1 other node.
+So we need to keep removing this till total_nodes remaining > 2
+When total nodes remaining == 2 or == 1, then we return those 1 or 2 nodes coz those are the
+required CENTRAL nodes.
+
+
+Solution:
+class Solution:
+    def findMinHeightTrees(self, n: int, edges: List[List[int]]) -> List[int]:
+        total_nodes = n
+        if total_nodes == 1:
+            return [0]
+        graph = defaultdict(set)
+        for u,v in edges:
+            graph[u].add(v)
+            graph[v].add(u)
+        
+        
+        leaves = []
+        leaf_count = 0
+        for node in graph:
+            if len(graph[node]) == 1:
+                leaf_count += 1
+                leaves.append(node)
+        
+        while total_nodes > 2:
+            total_nodes -= leaf_count
+            
+            leaves_for_next_round = []
+            for leaf in leaves:
+                neighbour = graph[leaf].pop()
+                graph[neighbour].remove(leaf)
+                if len(graph[neighbour]) == 1:
+                    leaves_for_next_round.append(neighbour)
+            
+            leaves = leaves_for_next_round
+            leaf_count = len(leaves)
+        return leaves
+        

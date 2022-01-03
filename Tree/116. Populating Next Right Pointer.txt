@@ -1,0 +1,133 @@
+116. Populating Next Right Pointers in Each Node
+Question:
+You are given a perfect binary tree where all leaves are on the same level, 
+and every parent has two children. The binary tree has the following definition:
+
+struct Node {
+  int val;
+  Node *left;
+  Node *right;
+  Node *next;
+}
+Populate each next pointer to point to its next right node. If there is no next right node, the next pointer should be set to NULL.
+
+Initially, all next pointers are set to NULL.
+
+Approach:
+In BFS approach, we use LEVEL-ORDER Traversal with a variation.
+Here we start by adding root and None in the queue.
+We iterate Node by Node and we append left and right child of current node into the queue.
+So during BFS iteration, whenever we encounter None, we know that a level is over.
+When level is over, we append None in the queue so that in next level iteration, the next pointer
+of the right most node will point to None.
+So if not Node: queue.append(None)
+But this will cause a INFINITE LOOP when we are at the ending None.
+So to avoid that, we check if node == None and queue[front] i.e queue[0] == None 
+That means before poping, the queue was [None, None] so this is the END and we break the loop.
+
+In DFS and optimized BFS approach, we use this property
+root.left.next = root.right
+Also for right child of node A to be mapped to left child of node B we do the following
+while left.right:
+	left = left.right
+	right = right.left
+	left.next = right
+
+So in optimized BFS, we go level by level
+In this we populate the next pointer of the LEFT and RIGHT child of current node.
+When we are at parent node, we populate the child nodes.
+
+head = root (To hold the address of ORIGINAL root)
+while root:
+	curr = root
+	while curr:
+		This loop will help to move HORIZONTALLY
+		if curr.left and curr.right:
+			curr.left.next = curr.right
+			if curr.next:
+				curr.right.next = curr.next.left
+		else:
+			CURR is a leaf node so we break;
+			this condition will only happen on the BOTTOM LEFT MOST child of the tree, 
+			i.e the 1st Node of IN-order traversal.
+			Coz from this level, all nodes are leaf nodes and we cannot populate the child of leaf nodes
+			as leaf nodes don't have child nodes.
+			if parent == leaf node: we break
+			
+			break
+			
+		curr = curr.next
+	
+	Now we move DOWN the TREE.
+	As it's a PERFECT TREE, we know if LEFT child is present then RIGHT child will also be present.
+	root = root.left
+
+As we have done the modifications, we ORIGINAL root that was stored in head.
+return head
+	
+
+Solution:
+1. BFS [Time: O(N), Space: O(2 ^ (logN)) logN is height of the tree]
+"""
+# Definition for a Node.
+class Node:
+    def __init__(self, val: int = 0, left: 'Node' = None, right: 'Node' = None, next: 'Node' = None):
+        self.val = val
+        self.left = left
+        self.right = right
+        self.next = next
+"""
+
+class Solution:
+    def connect(self, root: 'Optional[Node]') -> 'Optional[Node]':
+        queue = deque([root, None])
+        while queue:
+            node = queue.popleft()
+            if not node:
+                queue.append(None)
+                if queue[0] == None:
+                    break
+            else:
+                node.next = queue[0]
+                if node.left:
+                    queue.append(node.left)
+                if node.right:
+                    queue.append(node.right)
+        return root
+
+		
+2. DFS [Time: O(N), Space: log(N) i.e height of the three]
+class Solution:
+    def connect(self, root):
+        if not root or not root.left: return root
+        
+        self.connect(root.left)
+        self.connect(root.right)
+        
+        lft = root.left
+        rgh = root.right
+        lft.next = rgh
+
+        while lft.right: 
+            lft = lft.right
+            rgh = rgh.left
+            lft.next = rgh
+        
+        return root
+
+		
+3. Optimized BFS, [Time: O(N), Space: O(1)]
+class Solution:
+    def connect(self, root: 'Optional[Node]') -> 'Optional[Node]':
+        head = root
+        while root:
+            curr, root = root, root.left
+            while curr:
+                if curr.left:
+                    curr.left.next = curr.right
+                    if curr.next:
+                        curr.right.next = curr.next.left
+                else: break
+                
+                curr = curr.next
+        return head

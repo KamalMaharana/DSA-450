@@ -1,0 +1,100 @@
+143: Reorder List (Asked in AMAZON in Nov 2021)
+You are given the head of a singly linked-list. The list can be represented as:
+
+L0 → L1 → … → Ln - 1 → Ln
+Reorder the list to be on the following form:
+
+L0 → Ln → L1 → Ln - 1 → L2 → Ln - 2 → …
+You may not modify the values in the list's nodes. Only nodes themselves may be changed.
+
+Input: head = [1,2,3,4]
+Output: [1,4,2,3]
+
+Input: head = [1,2,3,4,5]
+Output: [1,5,2,4,3]
+
+Approach:
+Here we know that the flow is like this
+1 -> last -> 2 -> 2nd LAST -> 3 -> 3rd LAST ....
+
+From this we got to know that we need to traverse the 2nd HALF of the list in reverse order.
+So how about, 
+1. Reach middle by using Slow and FAST pointer method.
+2. Regerdless of the length of the list, 2nd half starts from mid.next
+3. Take mid.next as head and prev = None and reverse it, just like you reverse a normal Linkedlist
+4. After reversing, the reverse HEAD is actually the prev pointer, so head2 = prev
+5. Here keep merging it like this
+   nextt = head1.next
+   head1.next = head2
+   head1 = head1.next
+   head2 = nextt
+   
+   1 -> 2 -> 3     4 -> 5 -> 6
+   h1 = 1
+   h2 = 4
+   nxt = 2
+   h1.next = h2; 1 -> 4
+   # H1, H2 swapped
+   h1 = h1.next
+   h2 = nxt = 2
+   
+   
+   h1 = 4; h2 = 2; nxt = 5
+   h1.next = h2 = 2; 1- > 4 -> 2
+   h1 = 2
+   h2 = 5
+   
+   
+   h1 = 2; h2 = 5; nxt = 3
+   h1.next = h2 = 1 -> 4 -> 2 -> 5
+   h1 = 5
+   h2 = 3
+   
+   
+   h1 = 5; h2 = 3; nxt = 6
+   h1.next = h2 = 1 -> 4 -> 2 -> 5 -> 3
+   h1 = 3
+   h2 = 6
+   
+   
+   h1 = 3; h2 = 6; nxt = None
+   h1.next = h2 = 1 -> 4 -> 2 -> 5 -> 3 -> 6
+   h1 = 6
+   h2 = None
+
+
+
+Solution:
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def reorderList(self, head: ListNode) -> None:
+        """
+        Do not return anything, modify head in-place instead.
+        """
+        #step 1: find middle
+        if not head: return []
+        slow, fast = head, head
+        while fast.next and fast.next.next:
+            slow = slow.next
+            fast = fast.next.next
+        
+        #step 2: reverse second half
+        prev, curr = None, slow.next
+        while curr:
+            nextt = curr.next
+            curr.next = prev
+            prev = curr
+            curr = nextt    
+        slow.next = None
+        
+        #step 3: merge lists
+        head1, head2 = head, prev
+        while head2:
+            nextt = head1.next
+            head1.next = head2
+            head1 = head1.next
+            head2 = nextt

@@ -1,0 +1,80 @@
+Question 147:
+Perform Insertion Sort on LinkedList.
+
+Approach:
+In this, we need to apply our tradional insertion sort that we use on array.
+Here instead of checking from BACK, we check from START because 
+in Singly LinkedList we cannot go backwards.
+
+[1, 2, 4]
+Suppose in the above list we want to insert '3'; curr.val = 3
+So we have a pointer at '1' and a pointer at '2'; prev.val = 1, next.val = 2
+these are 'prev' and 'next' pointers
+So when next.val > curr.val, here we found the place to insert the curr.val
+between 'prev' and 'next' pointers.
+Here we need to HOLD curr.next before finding a place for curr.val
+because while fitting curr.val between prev and next.
+we do
+curr.next = next
+prev.next = curr
+so here curr.next changes and we'll lose track of next element to insert.
+so curr = holding_next
+
+Solution:
+JAVA:
+
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode insertionSortList(ListNode head) {
+        ListNode dummy = new ListNode(0);
+        ListNode curr = head;
+        ListNode curr_next;
+        while(curr != null) {
+            ListNode prev = dummy;
+            ListNode nxt = dummy.next;
+            curr_next = curr.next;
+            while( nxt != null ){
+                if(nxt.val > curr.val) break;
+                prev = nxt;
+                nxt = nxt.next;
+            }
+            curr.next = nxt;
+            prev.next = curr;
+            curr = curr_next;
+        }
+        return dummy.next;
+    }
+}
+
+Python:
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def insertionSortList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        dummy = ListNode(-1)
+        curr = head
+        while curr:
+            curr_next = curr.next
+            prv, nxt = dummy, dummy.next
+            while nxt:
+                if nxt.val > curr.val: break
+                prv = nxt
+                nxt = nxt.next
+                
+            curr.next = nxt
+            prv.next = curr
+            curr = curr_next
+        
+        return dummy.next

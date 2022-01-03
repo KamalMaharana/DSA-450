@@ -1,7 +1,9 @@
 Notes:
-Here we calculate the LeftMax and Right Max of every index and store them in
+Here we calculate the LeftMax; and Right Max of every index and store them in
 respective arrays.
-The LeftMax and RightMax Array are formed my using stack.
+It shoudl be LeftMIN and RIGHTMIN array, as in those array, we are trying to get 
+Next Smaller 
+The LeftMax and RightMax Array are formed by using stack.
 When we find element greater than top of stack, that means that current element is
 the greater element for value in top of stack, so until 
 while stack and stack[top] <= val: we pop and when then we know 
@@ -9,6 +11,52 @@ if stack not empty, then top of stack is the greater element on given direction.
 We try to maintain a linearly increasing Order in the stack.
 
 Solution:
+def getLeftMinArray(heights):
+            n = len(heights)
+            minArray = [0] * n
+            stack = [] # It will store INDEXES; not Values
+            for i in range(n):
+                curr_height = heights[i]
+                while stack and curr_height <= heights[stack[-1]]:
+                    stack.pop()
+                
+                if stack:
+                    minArray[i] = stack[-1] + 1
+                else:
+                    minArray[i] = 0
+                
+                
+                stack.append(i)
+            return minArray
+        def getRightMinArray(heights):
+            n = len(heights)
+            minArray = [0] * n
+            stack = [] # It will store INDEXES; not Values
+            for i in range(n - 1, -1, -1):
+                curr_height = heights[i]
+                while stack and curr_height <= heights[stack[-1]]:
+                    stack.pop()
+                
+                if stack:
+                    minArray[i] = stack[-1] - 1
+                else:
+                    minArray[i] = n - 1
+                
+                
+                stack.append(i)
+            return minArray
+        
+        leftMinArray = getLeftMinArray(heights)
+        rightMinArray = getRightMinArray(heights)
+        for i in range(len(heights)):
+            width = rightMinArray[i] - leftMinArray[i] + 1
+            height = heights[i]
+            area = width * height
+            result = max(result, width * height)
+        return result
+
+
+-> Coincise Solution (Not Time and Space Optimised)
 class Solution:
     def largestRectangleArea(self, heights: List[int]) -> int:
 #         inc = increment i.e 
@@ -34,17 +82,17 @@ class Solution:
         return result
     
 #     Complex Solution NOT FOR INTERVIEW
-        # n = len(heights)
-        # stack = []
-        # result = 0
-        # for i in range(n+1):
-        #     while stack and (i == n or heights[stack[-1]] >= heights[i]):
-        #         height = stack[-1]
-        #         stack.pop()
-        #         if len(stack) == 0:
-        #             width = i
-        #         else:
-        #             width = i - stack[-1] - 1
-        #         result = max(result, width * height)
-        #     stack.append(i)
-        # return result
+        n = len(heights)
+        stack = []
+        result = 0
+        for i in range(n+1):
+            while stack and (i == n or heights[stack[-1]] >= heights[i]):
+                height = heights[stack[-1]]
+                stack.pop()
+                if len(stack) == 0:
+                    width = i
+                else:
+                    width = i - stack[-1] - 1
+                result = max(result, width * height)
+            stack.append(i)
+        return result

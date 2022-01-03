@@ -1,0 +1,53 @@
+Notes
+Given an integer array nums, find a contiguous non-empty subarray 
+within the array that has the largest product, and return the product.
+
+It is guaranteed that the answer will fit in a 32-bit integer.
+
+A subarray is a contiguous subsequence of the array.
+
+Input: nums = [2,3,-2,4]
+Output: 6
+Explanation: [2,3] has the largest product 6.
+
+Input: nums = [-2, 3, -4]
+Output: 24
+Explanation: [-2, 3, -4] has the largest product 24.
+
+Input: nums = [-2,0,-1]
+Output: 0
+Explanation: The result cannot be 2, because [-2,-1] is not a subarray.
+
+
+Approach:
+This is similar to a Buy and Sell Stock question.
+This is a VARIATION of Kadane's Algorithm
+This is not a TABLE or Recursive DP, but a DP using variables.
+Here the main problem arises due the property of -ve numbers
+-ve * -ve = +ve (MAX)
+-ve * +ve = -ve (MIN)
+So we have to keep track of currMin and currMax until current index
+Because if currMin = -ve and current number = -ve then 
+-ve * -ve = +ve, so currMin is use to handle this case.
+Eg:
+[2,3,-2,4]
+At i = 0
+currMin = min(2,2,2) = 2, currMax = max(2,2,2) = 2, result = 2
+At i = 1
+currMin = min(3 * 2, 3 * 2, 3) = 3, currMax(3*2, 3*2, 3) = 6, result = 6
+At i = 2
+currMin = min(6 * -2, 3 * 2, -2) = -2, currMax(6 * -2, 3 * -2, -2) = -2, result = 6
+At i = 3
+currMin = min(-2 * 4, -2 * 4, 4) = -8, currMax(-2 * 8, -2 * 4, 4) = -8, result = max(4, 6) = 4
+
+Solution:
+class Solution:
+    def maxProduct(self, nums: List[int]) -> int:
+        result = nums[0]
+        currMin, currMax = 1, 1
+        for n in nums:
+            temp = currMax * n
+            currMax = max(temp, n * currMin, n)
+            currMin = min(temp, n * currMin, n)
+            result = max(result, currMax)
+        return result

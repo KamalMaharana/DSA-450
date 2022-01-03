@@ -1,0 +1,57 @@
+Notes:
+Given a string s, return the longest palindromic substring in s.
+
+Input: s = "babad"
+Output: "bab"
+Note: "aba" is also a valid answer.
+
+Approach:
+Here we use "Expand From Middle" approach.
+In a palindrome, from middle if we move in left and right direction, the characters
+are same.
+ex: r a c e c a r
+        l   r
+middle = 'e';
+similarly, if we decrement 'l' pointer and increment 'r' pointer we will see that
+letters at those pointers will match because its the property of palindrome.
+So our approach is,
+From every index 0 -> length of string:
+1. We take that element as middle and then expand it LEFT and RIGHT direction if the 
+   letter at LEFT and RIGHT pointer matches.
+
+Here we have to look at EVEN and ODD length palindrome,
+In ODD, we get a single middle letter
+ex: [a, b, a]; middle = b
+In EVEN, we get 2 middle letters and both should be same for that string to be palindrome
+ex: [a, b, b, a] middle = b, b; i.e index [1, 2]
+So when we expand, we will expand twice, 1 for ODD and 1 for EVEN
+In case of ODD, we have LEFT and RIGHT point to same index.
+In case of EVEN, we have LEFT = mid, and RIGHT = mid + 1.
+
+Solution:
+class Solution:
+    def longestPalindrome(self, s: str) -> str:
+        if len(s) == 1:
+            return s
+        def expandFromMiddle(s, left, right):
+            while left >= 0 and right < len(s) and s[left] == s[right]:
+                left -= 1
+                right += 1
+            left += 1
+            right -= 1
+            return (left, right, right - left + 1)
+        
+        res = ""
+        l = 0
+        for i in range(len(s)):
+            left1, right1, l1 = expandFromMiddle(s, i, i)
+            left2, right2, l2 = expandFromMiddle(s, i, i+1)
+            if l1 > l2:
+                if l1 > l:
+                    l = l1
+                    res = s[left1 : right1 + 1]
+            else:
+                if l2 > l:
+                    l = l2
+                    res = s[left2 : right2 + 1]
+        return res

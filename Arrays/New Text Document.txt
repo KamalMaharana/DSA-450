@@ -1,0 +1,29 @@
+Notes:
+Given an integer array nums, 
+find the contiguous subarray (containing at least one number) 
+which has the largest sum and return its sum.
+A subarray is a contiguous part of an array.
+
+Example:
+Input: nums = [-2,1,-3,4,-1,2,1,-5,4]
+Output: 6
+Explanation: [4,-1,2,1] has the largest sum = 6.
+
+Approach:
+This is Kadane's Algorithm question.
+Kadane's Algorithm is Max Sum Subarray, it is like a Dynamic Programming Question.
+So we have curr_sum and max_sum
+curr_sum will hold the sum until current index.
+max_sum will hold the final answer.
+curr_sum will check if current val + curr_sum < val; if yes then curr_sum = val
+then we make changes to max_sum.
+Go through the CODE. 
+
+Solution:
+class Solution:
+    def maxSubArray(self, nums: List[int]) -> int:
+        curr_sum, max_sum = -float("inf"), -float("inf")
+        for val in nums:
+            curr_sum = max(curr_sum + val, val)
+            max_sum = max(curr_sum, max_sum)
+        return max_sum

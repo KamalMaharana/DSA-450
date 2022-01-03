@@ -1,0 +1,74 @@
+394. Decode String
+Given an encoded string, return its decoded string.
+
+The encoding rule is: k[encoded_string], where the encoded_string inside the square brackets 
+is being repeated exactly k times. Note that k is guaranteed to be a positive integer.
+
+You may assume that the input string is always valid; No extra white spaces, 
+square brackets are well-formed, etc.
+
+Furthermore, you may assume that the original data does not contain any digits 
+and that digits are only for those repeat numbers, k. 
+For example, there won't be input like 3a or 2[4].
+
+
+Approach:
+This question was not solved by me :(
+Here, this question screams to use STACK because:
+1. BRACKETS and 
+2. here we need to keep track of previous values.
+
+So here we construct the string by appending the characters on top of stack until we find a "]"
+So for this
+s = "3[ab2[cd]]" stack = [""]
+starting the stack with empty string at the top.
+Here the flow in stack will be
+ch = 3; stack = ["", 3]
+ch = "["; stack = ["", 3, ""]
+ch = "a"; stack = ["", 3, "a"]
+ch = "b"; stack = ["", 3, "ab"]
+ch = "2"; stack = ["", 3, "ab"]
+ch = "["; stack = ["", 3, "ab", 2, ""]
+ch = "c"; stack = ["", 3, "ab", 2, "c"]
+ch = "d"; stack = ["", 3, "ab", 2, "cd"]
+ch = "]"; Here we pop 3 values in this order
+		  s1 = "cd", count = 2, s2 = "abc"
+		  Then we have
+		  result = s2 + (s1 * count) = "ab" + ("cd" * 2)
+		         = "ab" + "cd" + "cd"
+				 = "abcdcd"
+		  
+		  Then push this result onto stack
+stack = ["", 3, "abcdcd"]
+ch = "]"; stack = ["", 3, "abcdcd"]
+	s1 = "abcdcd", count = 3, s2 = ""
+	result = s2 + (s1 * count)
+	       = "" + ("abcdcd" * 3)
+		   = "" + "abcdcd" + "abcdcd" + "abcdcd"
+		   = "abcdcdabcdcdabcdcd"
+	Appending result = stack
+	stack = ["abcdcdabcdcdabcdcd"]
+
+Final Result = stack[-1]
+
+
+Solution:
+class Solution:
+    def decodeString(self, s: str) -> str:
+        it, num, stack = 0, 0, [""]
+        while it < len(s):
+            if s[it].isdigit():
+                num = num * 10 + int(s[it])
+            elif s[it] == "[":
+                stack.append(num)
+                num = 0
+                stack.append("")
+            elif s[it] == "]":
+                str1 = stack.pop()
+                rep = stack.pop()
+                str2 = stack.pop()
+                stack.append(str2 + str1 * rep)
+            else:
+                stack[-1] += s[it]              
+            it += 1           
+        return stack[-1]

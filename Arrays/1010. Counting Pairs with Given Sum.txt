@@ -1,0 +1,150 @@
+1010. Pairs of Songs With Total Durations Divisible by 60
+You are given a list of songs where the ith song has a duration of time[i] seconds.
+
+Return the number of pairs of songs for which their total duration in seconds is divisible by 60.
+Formally, we want the number of indices i, j such that i < j with (time[i] + time[j]) % 60 == 0.
+
+ 
+
+Example 1:
+
+Input: time = [30,20,150,100,40]
+Output: 3
+Explanation: Three pairs have a total duration divisible by 60:
+(time[0] = 30, time[2] = 150): total duration 180
+(time[1] = 20, time[3] = 100): total duration 120
+(time[1] = 20, time[4] = 40): total duration 60
+
+
+Example 2:
+
+Input: time = [60,60,60]
+Output: 3
+Explanation: All three pairs have a total duration of 120, which is divisible by 60.
+
+Approach:
+To make this question short.
+This question is 
+FIND NUMBER OF PAIRS WHOSE SUM is MULTIPLE OF 60.
+So this bowls down to COUNT PAIRS WITH GIVEN SUM, when we (nums[i])%60 every value in nums array.
+MOD operation will convert it down to range 0-59.
+From there we can use COUNTING PAIRS approach which is similar to 2-Sum approach.
+So here we have a FREQUENCY Map = defaultdict(lambda: 0).
+We run a loop from 0 to len(nums)
+for every nums[i]; we need to find
+target = (required_sum - nums[i]) where here required_sum = 60
+so,
+count += frequency[target]
+the above line will add all the pairs (nums[i], target) that are found till i'th iteration
+
+frequency[nums[i]] += 1
+This indicates that we found nums[i] so just increase it's frequency
+
+At the end we get count as answer
+
+Dry Run:
+[30,20,150,100,40]
+After mod i.e nums[i] % 60
+[30, 20, 30, 40, 40]
+i = 0
+nums[i] = 30
+target = 30
+frequency = {30: 0, 20: 0, 40: 0}
+count += 0
+frequency = {30: 1, 20: 0, 40: 0}
+
+i = 1
+nums[i] = 20
+target = 40
+frequency = {30: 1, 20: 0, 40: 0}
+count += 0
+frequency = {30: 1, 20: 1, 40: 0}
+
+i = 2
+nums[i] = 30
+target = 30
+frequency = {30: 1, 20: 1, 40: 0}, we have 30 present so count += 1
+count += 1 = 1
+frequency = {30: 2, 20: 1, 40: 0}
+
+i = 3
+nums[i] = 40
+target = 20
+frequency = {30: 2, 20: 1, 40: 0} we have 20 in frequency
+count += 1 = 1 + 1 = 2
+frequency = {30: 2, 20: 1, 40: 1}
+
+i = 4
+nums[i] = 40
+target = 20
+frequency = {30: 2, 20: 1, 40: 1} we have 20 in frequency
+count += 1 = 2 + 1 = 3
+frequency = {30: 2, 20: 1, 40: 2}
+
+result = count = 3
+
+Alternate Solution:
+We run a loop from 0 to len(nums)
+for every nums[i]; we need to find
+target = (required_sum - nums[i]) where here required_sum = 60
+if target in frequency_map:
+	count += frequency[target]
+	
+But there are cases where nums[i] == target; eg: (30,30), (0, 0), (60, 60) ...
+eg: nums = [30, 30, 30]
+frequency = {30: 3}
+here 
+count += frequency[target] = 3 for every 3 we encounter
+final_count = 9 which is incorrect.
+So 
+if nums[i] == target:
+	count -= 1
+
+At the end we return 
+count // 2 
+divide by 2 is because to avoid double counting.
+In above array [30, 30, 30],
+In every iteration we add 3 to count and decrement 1 = 3 - 1 = 2
+So these are the pairs that are found through this loop
+index = 0: (0, 1), (0, 2)
+index = 1: (1, 0), (1, 2)
+index = 2: (2, 0), (2, 1)
+
+But what the actual pairs are:
+index = 0: (0, 1), (0, 2)
+index = 1: (1, 2)
+index = 2: 
+
+Comparing the above 2 results, we can see that 
+[(0, 1), (1, 0)]
+[(1, 2), (2, 1)]
+[(0, 2), (2, 0)]
+The right values are repeated pairs, so that's why we divide by 2 our final count 
+
+
+Solution:
+class Solution:
+    def numPairsDivisibleBy60(self, time: List[int]) -> int:
+        time = [num%60  for num in time]
+        frequency = Counter(time)
+        count = 0
+        for a in time:
+            target = (60 - a) % 60
+            if target in frequency:
+                count += frequency[target]
+                if target == a:
+                    count -= 1
+        return count // 2
+
+		
+
+class Solution:
+    def numPairsDivisibleBy60(self, time: List[int]) -> int:
+        time = [num%60  for num in time]
+        frequency = defaultdict(lambda: 0)
+        count = 0
+        for num in time:
+            target = (60 - num) % 60
+            count += frequency[target]
+            frequency[num] += 1
+        return count

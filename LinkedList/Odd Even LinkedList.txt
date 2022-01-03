@@ -1,0 +1,43 @@
+Notes:
+Given the head of a singly linked list, group all the nodes with odd indices together
+ followed by the nodes with even indices, and return the reordered list.
+
+The first node is considered odd, and the second node is even, and so on.
+
+Note that the relative order inside both the even and odd groups should remain as it was in the input.
+
+You must solve the problem in O(1) extra space complexity and O(n) time complexity.
+
+Approach:
+As we can see, we need to do
+curr.next = curr.next.next
+So start ODD at head, and EVEN at head.next
+while odd and odd.next and even and even.next:
+	odd.next = odd.next.next
+	odd = odd.next
+	even.next = even.next.next
+	even = even.next
+
+Here in While loop, we are not checking for curr.next.next because if curr.next != None: 
+then curr.next.next will either be None or will be a Node.
+
+Solution:
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def oddEvenList(self, head: ListNode) -> ListNode:
+        if head:
+            ptr1 = head
+            ptr2 = head.next
+            temp = head.next
+            while ptr1 and ptr1.next and ptr2 and ptr2.next:
+                ptr1.next = ptr1.next.next
+                ptr1 = ptr1.next
+                ptr2.next = ptr2.next.next
+                ptr2 = ptr2.next
+                
+            ptr1.next = temp
+        return head

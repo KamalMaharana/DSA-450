@@ -1,0 +1,57 @@
+Question 790:
+You have two types of tiles: a 2 x 1 domino shape and a tromino shape. You may rotate these shapes.
+
+
+Given an integer n, return the number of ways to tile an 2 x n board. 
+Since the answer may be very large, return it modulo 109 + 7.
+
+In a tiling, every square must be covered by a tile. 
+Two tilings are different if and only if there are two 4-directionally 
+adjacent cells on the board such that exactly one of the tilings has both squares occupied by a tile.
+
+Input: n = 3
+Output: 5
+Explanation: The five different ways are show above.
+
+This is a COPY solution.
+
+Approach:
+https://leetcode.com/problems/domino-and-tromino-tiling/discuss/1620975/C%2B%2BPython-Simple-Solution-w-Images-and-Explanation-or-Optimization-from-Brute-Force-to-DP
+Here there are 5 possible shapes.
+A single Tromino will leave space of 1 block, Domino will not leave any space.
+Here it forms a FIBONACCI type series, but for interview purpose, we will keep it till tabular DP.
+Go through the explanation link for total understanding.
+
+Solution:
+# Recursive DP
+class Solution:
+    @cache
+    def numTilings(self, n, previous_gap = False):
+        if n < 0: return 0
+        if n == 0: return not previous_gap
+        if previous_gap:
+            return (self.numTilings(n-1) + self.numTilings(n-1, True)) % 1_000_000_007
+        return (self.numTilings(n-1) + self.numTilings(n-2) + 2*self.numTilings(n-2, True)) % 1_000_000_007
+
+
+# Tabular DP
+class Solution:
+    def numTilings(self, n):
+        dp = [[0, 0] for _ in range(n+2)]
+        dp[1], dp[2] = [1, 1], [2, 2]
+        for i in range(3, n+1):
+            dp[i][0] = dp[i-1][0] + dp[i-2][0] + 2*dp[i-2][1]
+            dp[i][1] = dp[i-1][0] + dp[i-1][1]
+        return dp[n][0] % 1_000_000_007
+
+# Memory Efficient
+class Solution:
+    def numTilings(self, n):
+        if n <= 2: return n
+        filled_prev, gap_prev, filled_prev2, gap_prev2 = 2,2,1,1
+        for i in range(3, n+1):
+            filled = filled_prev + filled_prev2 + 2*gap_prev2
+            gap = filled_prev + gap_prev
+            
+            filled_prev2, filled_prev, gap_prev2, gap_prev = filled_prev, filled, gap_prev, gap
+        return filled_prev % 1_000_000_007

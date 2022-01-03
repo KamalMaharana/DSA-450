@@ -1,0 +1,94 @@
+Question (HARD):
+A positive integer is magical if it is divisible by either a or b.
+
+Given the three integers n, a, and b, 
+return the nth magical number. Since the answer may be very large, return it modulo 109 + 7.
+
+Input: n = 1, a = 2, b = 3
+Output: 2
+
+Input: n = 5, a = 2, b = 4
+Output: 10
+
+Approach:
+This is Binary Search on answer.
+Here the search space is [min(a,b), n * min(a,b)]
+because start will always be min(a,b)
+ex: minimum number divisible by 2 is 2 itself.
+so minimum number divisible by x(i.e min(a,b)) is x itself
+And for UPPER LIMIT i.e N * min(a, b);
+this is because n * a = N multiples of 'a' that are divisible by 'a'
+and n * b = N multiples of 'b' that are divisible by 'b'
+i.e N nummbers that are divisible by either 'a' and N numbers that are divisible by 'b'
+So N * min(a, b) will be something like
+a1, b1, a2, b2, .... ans,..... an, bn
+                     nth
+					(ans)
+here the order of a1, b1, ... can be different but we know that in range 
+[min(a, b), N * min(a, b)] will surely contain >= N magical numbers.
+
+We could have taken UPPER_LIMIT = 10**9 or any bigger number,
+but that would just increase the unnecessary comparisons.
+Technically TC(O(logN)) in both cases, but max value of N changes depending on search space.
+
+So to find out:
+How many numbers that are multiple of 2 are less than 35?
+answer = 35 // 2 = 17 so there are 17 numbers that are multiple of 2 and are less than 35.
+
+Similarly to find out:
+How many numbers that are multiple of A and less than N?
+answer = N // A
+
+So we do this for both A and B.
+But doing this will include repition
+i.e Double Counting
+ex: A = 4, B = 6
+So the number 12 will be counted in both A and B.
+To eliminate that, we take LCM of A and B, then perform the count, and subtract that from final.
+count = N // LCM(A, B)
+final_count = N // A + N // B - N // LCM(A, B)
+
+If final_count < N (required Nth element):
+	left = mid + 1
+else final_count >= N:
+	right = mid
+	
+answer = is either LEFT or RIGHT when LEFT == RIGHT
+
+right = mid; because MID can still be the answer because there is a possibility that
+MID is >= Nth number but it's not a Magical Number, 
+So we cannot SKIP the MID as it could be a possible answer.
+We could have done the following
+while left <= right:
+	else:
+		right = mid - 1
+
+Here the answer would be LEFT.
+
+Solution:
+class Solution:
+    def nthMagicalNumber(self, n: int, a: int, b: int) -> int:
+        def lcm(a, b):
+            return (a * b)//gcd(a, b)
+        
+        def getMagicalNumberCount(mid, a, b, common):
+            result = mid//a + mid//b - mid//common
+            return result
+        
+        left = min(a, b)
+        right = n * min(a, b)
+        common = lcm(a, b)
+        result = left
+        MOD = 10**9 + 7
+        while left < right:
+            mid = (left + right) // 2
+            count = getMagicalNumberCount(mid, a, b, common)
+            if count < n:
+                left = mid + 1
+            else:
+                right = mid
+        
+        # Result will happen when LEFT == RIGHT, so either LEFT or RIGHT is the answer
+        result = right
+        return result % MOD
+                

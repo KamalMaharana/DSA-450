@@ -1,0 +1,58 @@
+Solution:
+class Solution:
+    def getOperators(self, s):
+        operators = deque()
+        ops = {'+', '-', '*', '/'}
+        for ch in s:
+            if ch in ops:
+                operators.append(ch)
+        return operators
+    def getNumbers(self, s):
+        temp = ""
+        for i in ['+', '-', '*', '/']:
+            s = s.replace(i, " ")
+        numbers = s.split()
+        return deque(numbers)
+    
+    def calculate(self, s: str) -> int:
+        s = s.replace(" ", "")
+        numbers = self.getNumbers(s)
+        operators = self.getOperators(s)
+        exp = []
+        for op in operators:
+            exp.append(numbers.popleft())
+            exp.append(op)
+        
+        if numbers:
+            exp.append(numbers.popleft())
+        
+        stack = []
+        i = 0
+        while i < len(exp):
+            if exp[i] == "/":
+                a = stack.pop()
+                i += 1
+                b = exp[i]
+                stack.append(int(a)//int(b))
+            elif exp[i] == "*":
+                a = stack.pop()
+                i += 1
+                b = exp[i]
+                stack.append(int(a)*int(b))
+            else:
+                if exp[i].isdigit():
+                    stack.append(int(exp[i]))
+                else:
+                    stack.append(exp[i])
+            i += 1
+        
+        stack = deque(stack)
+        op = {'+', '-', '*', '/'}
+        while len(stack) > 1:
+            a, op, b = stack.popleft(), stack.popleft(), stack.popleft()
+            if op == "+":
+                stack.appendleft(a + b)
+            else:
+                stack.appendleft(a - b)
+            
+        return stack[-1]
