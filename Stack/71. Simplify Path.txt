@@ -1,0 +1,59 @@
+71. Simplify Path
+Question:
+Given a string path, which is an absolute path (starting with a slash '/') to a file or directory in a 
+Unix-style file system, convert it to the simplified canonical path.
+
+In a Unix-style file system, a period '.' refers to the current directory, a double period '..' 
+refers to the directory up a level, and any multiple consecutive slashes (i.e. '//') are treated 
+as a single slash '/'. For this problem, any other format of periods such as '...' are treated as 
+file/directory names.
+
+The canonical path should have the following format:
+
+The path starts with a single slash '/'.
+Any two directories are separated by a single slash '/'.
+The path does not end with a trailing '/'.
+The path only contains the directories on the path from the root directory to the target file or directory (i.e., no period '.' or double period '..')
+Return the simplified canonical path.
+
+Approach:
+This is a simple stack solution.
+Just append all values in an array called temp until we see "/".
+Now check if the values appended is not on ["/", "", "."] as "//" or "" or "." means the same.
+Then check if temp == "..": which means we go 1 directory back, so we pop from result.
+Then after all the above check, we append temp to the result list.
+
+Now run a for loop on result list so that we can seperate all values by "/" and have that value as string res.
+Then we don't want to add "/" at the end "", so we remove the last "/".
+
+Then we check if we have something in res, if not then we have to return "/".
+
+
+Solution:
+class Solution:
+    def simplifyPath(self, path: str) -> str:
+        result = []
+        i = 1
+        while i < len(path):
+            temp = ""
+            while i < len(path) and path[i] != "/":
+                temp += path[i]
+                i += 1
+            if temp == "/" or temp == "" or temp == ".":
+                i += 1
+                continue
+            
+            if temp == "..":
+                if result: result.pop()
+                i += 1
+                continue
+            
+            result += [temp]
+            i += 1
+        
+        res = "/"
+        for r in result:
+            res += r + "/"
+        res = res[:-1]
+        return res if res else "/"
+            

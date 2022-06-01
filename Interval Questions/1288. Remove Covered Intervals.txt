@@ -1,0 +1,61 @@
+1288. Remove Covered Intervals
+Given an array intervals where intervals[i] = [li, ri] represent the interval [li, ri), 
+remove all intervals that are covered by another interval in the list.
+
+The interval [a, b) is covered by the interval [c, d) if and only if c <= a and b <= d.
+
+Return the number of remaining intervals.
+
+
+Example 1:
+
+Input: intervals = [[1,4],[3,6],[2,8]]
+Output: 2
+Explanation: Interval [3,6] is covered by [2,8], therefore it is removed.
+
+Example 2:
+
+Input: intervals = [[1,4],[2,3]]
+Output: 1
+
+Approach:
+As this is a Interval Problem, we need to sort the input 
+(here both ascending and descending order sorting works)
+Then RUN a LOOP.
+start and end current interval in loop
+left and right are intial starting and ending.
+if start > left and end > right:
+this means that current interval has nothing in common with previous interval
+so they are non-overlapping, which means we need to increase count of intervals.
+count += 1
+left = start this means we found a new interval that start at LEFT.
+
+so even if we start a new interval or extend current interval, we maximize right to futher RIGHT side.
+right = max(right, end)
+
+for inter in intervals:
+	start, end = interval
+	if start > left and end > right:
+		This means current interval in not overlapping with previous interval
+		count += 1
+		left = start
+	
+	extend the right boundary
+	right = max(right, end)
+
+return count
+
+Solution:
+class Solution:
+    def removeCoveredIntervals(self, intervals: List[List[int]]) -> int:
+        intervals.sort()
+        count = 1
+        left = intervals[0][0]
+        right = intervals[0][1]
+        for i in range(1, len(intervals)):
+            start, end = intervals[i]
+            if start > left and end > right:
+                count += 1
+                left = start
+            right = max(right, end)
+        return count

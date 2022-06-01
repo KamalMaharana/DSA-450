@@ -1,0 +1,52 @@
+322. Coin Change
+You are given an integer array coins representing coins of different denominations and an integer amount representing a total amount of money.
+
+Return the fewest number of coins that you need to make up that amount. If that amount of money cannot be made up by any combination of the coins, return -1.
+
+You may assume that you have an infinite number of each kind of coin.
+
+
+Example 1:
+
+Input: coins = [1,2,5], amount = 11
+Output: 3
+Explanation: 11 = 5 + 5 + 1
+
+Example 2:
+
+Input: coins = [2], amount = 3
+Output: -1
+
+Example 3:
+
+Input: coins = [1], amount = 0
+Output: 0
+
+
+Approach:
+This is one of the historical DP problem.
+In clearly show the core thought process of DP i.e
+Solve for low values, and from their result you'll get the result of HIGHER values
+Solution of smaller problems will eventually help you solve the bigger problem.
+Here, we need know that the lowest number of coins required for amount that is already present in coins list
+it'll be 1.
+amount = 2, coins = [1,2]
+we can see we already have a single coin of value 2, so we only need 1 coin for it.
+If we had coins = [1], then we would have required 2 coins of 1 so 1 + 1 = 2.
+So here for 
+
+
+
+
+
+Code:
+class Solution:
+    def coinChange(self, coins: List[int], amount: int) -> int:
+        values = [float(inf) for i in range(amount + 1)]
+        values[0] = 0
+        for i in range(len(coins)):
+            for j in range(1, len(values)):
+                if coins[i] <= j:
+                    values[j] = min(values[j], values[j - coins[i]] + 1)
+        
+        return values[-1] if values[-1] != float(inf) else -1

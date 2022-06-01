@@ -1,0 +1,98 @@
+24. Swap Nodes in Pairs
+Given a linked list, swap every two adjacent nodes and return its head. 
+You must solve the problem without modifying the values in the list's nodes 
+(i.e., only nodes themselves may be changed.)
+
+ 
+Example 1:
+Input: head = [1,2,3,4]
+Output: [2,1,4,3]
+
+Example 2:
+
+Input: head = []
+Output: []
+
+Example 3:
+
+Input: head = [1]
+Output: [1]
+
+Approach:
+This problem is solved using STACK.
+We want to swap 2 nodes at a time.
+If we try swaping nodes from start, then we'll mess up with the next pointer and will get wrong answer.
+[1,2,3,4,5]
+If we go from start to end
+2 -> 1, but 2 was pointing to 3, like this we mess up the next pointer mapping.
+So we know that we need to start from END, so remember
+If we need to start proccessing from END of LinkedList, this means we need to use
+STACK
+Stack helps us store previous computation and mapping, whenever we want to refer to previous values
+for current evaluation, we use stack
+Here we store 2 nodes at a time in the stack, just to emulate it as pair
+use slow and fast pointer both initially pointing to head.
+And we know if there are enough values then head.next is the answer.
+head = head.next just to keep a point at correct head after swapping completes
+so that after processing, we can directly return head.
+then 
+while fast:
+slow = fast
+fast = fast.next.next if fast.next is not None else None
+
+
+By the above while loop, stack will always contains EVEN number of Nodes.
+if after while loop, fast is None then there is a Node left which is at ODD position and doesn't have
+a pair to swap.
+So if fast is None, then that last node is at SLOW pointer.
+so use a PREV pointer to store the prev node as SLOW or None
+if fast:
+	prev = None
+else:
+	prev = slow
+	
+After filling the stack, we will POP from stack in pairs.
+while stack is not empty:
+a = stack.pop()
+b = stack.pop()
+a.next = b
+b.next = prev
+prev = a
+
+
+
+Solution:
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def swapPairs(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        if not head or not head.next: return head
+        stack = []
+        slow = head
+        fast = head.next
+        head = head.next
+        
+        while fast:
+            stack.append(slow)
+            stack.append(fast)
+            slow = fast.next
+            fast = fast.next.next if fast.next else None
+        
+        if fast: # This means there are even number of nodes and all nodes are in stack
+            prev = None
+        else:  # This means there are ODD number of nodes and there is an ending node that doesn't have a pair
+            prev = slow
+        
+        
+        # print(stack)
+        while stack:
+            a = stack.pop()
+            b = stack.pop()
+            a.next = b
+            b.next = prev
+            prev = a
+        
+        return head

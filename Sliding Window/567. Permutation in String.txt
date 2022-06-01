@@ -1,0 +1,57 @@
+Given two strings s1 and s2, return true if s2 contains a permutation of s1, or false otherwise.
+
+In other words, return true if one of s1's permutations is the substring of s2.
+
+
+Example 1:
+
+Input: s1 = "ab", s2 = "eidbaooo"
+Output: true
+Explanation: s2 contains one permutation of s1 ("ba").
+
+Example 2:
+
+Input: s1 = "ab", s2 = "eidboaoo"
+Output: false
+
+Approach:
+This is exactly similar to "Find All the Anagrams in the string" question.
+The only dissimilarity between these 2 questions is, here we just need to check if the 2nd string
+contains an ANAGRAM i.e PERMUTATION of 1st string instead of counting all the ANAGRAMS that are present.
+This is a sliding window problem.
+Take 2 defaultdict, target and window
+target will contains frequency of S1, window is the sliding window hashmap.
+
+Solution:
+class Solution:
+    def checkInclusion(self, s1: str, s2: str) -> bool:
+        if len(s1) > len(s2):
+            return False
+        
+        window = defaultdict(lambda: 0)
+        target = defaultdict(lambda: 0)
+        for i in range(len(s1)):
+            window[s2[i]] += 1
+            target[s1[i]] += 1
+        
+        if window == target:
+            return True
+        
+        window[s2[0]] -= 1
+        if window[s2[0]] == 0:
+            window.pop(s2[0])
+            
+        left = 1
+        right = len(s1)
+        while right < len(s2):
+            ch = s2[right]
+            window[ch] += 1
+            if window == target:
+                return True
+            window[s2[left]] -= 1
+            if window[s2[left]] == 0:
+                window.pop(s2[left])
+            left += 1
+            right += 1
+        return False
+

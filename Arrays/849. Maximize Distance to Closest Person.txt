@@ -1,0 +1,92 @@
+849. Maximize Distance to Closest Person
+
+You are given an array representing a row of seats where seats[i] = 1 represents 
+a person sitting in the ith seat, and seats[i] = 0 represents that the ith seat is empty (0-indexed).
+
+There is at least one empty seat, and at least one person sitting.
+
+Alex wants to sit in the seat such that the distance between him and the closest person to him is maximized. 
+
+Return that maximum distance to the closest person.
+ 
+
+Example 1:
+
+Input: seats = [1,0,0,0,1,0,1]
+Output: 2
+Explanation: 
+If Alex sits in the second open seat (i.e. seats[2]), then the closest person has distance 2.
+If Alex sits in any other open seat, the closest person has distance 1.
+Thus, the maximum distance to the closest person is 2.
+
+
+Example 2:
+
+Input: seats = [1,0,0,0]
+Output: 3
+Explanation: 
+If Alex sits in the last seat (i.e. seats[3]), the closest person is 3 seats away.
+This is the maximum distance possible, so the answer is 3.
+
+
+Example 3:
+
+Input: seats = [0,1]
+Output: 1
+
+
+Approach:
+Here we need Left Prefix Array to store the closest empty place on LEFT of current index.
+And Right Prefix Array to store the closest empty place on RIGHT of current index.
+Fill the Left and Right Prefix Array
+Initialize both arrays with -1
+-1: there is NO 1 present in given direction
+0: This represents that this is not an empty space i.e arra[i] == 1
+num > 0: This represents the distance of the 1 in the given direction(LEFT or RIGHT depending on the array).
+
+So using this, for i'th index, we get
+if seats[i] == 0:
+    leftDistance = leftArr[i] if leftArr[i] != -1 else float('inf')
+    rightDistance = rightArr[i] if rightArr[i] != -1 else float('inf')
+    distance = min(leftDistance, rightDistance)
+    max_distance = max(max_distance, distance)
+
+Solution:
+class Solution:
+    def maxDistToClosest(self, seats: List[int]) -> int:
+        leftArr = [-1] * len(seats)
+        rightArr = [-1] * len(seats)
+        n = len(seats)
+        prev = None
+        i = 0
+        while seats[i] == 0:
+            i += 1
+        for j in range(i, n):
+            if seats[j] == 0:
+                leftArr[j] = prev
+                prev += 1
+            else:
+                leftArr[j] = 0
+                prev = 1
+        
+        i = n - 1
+        while seats[i] == 0:
+            i -= 1
+        prev = 1
+        for j in range(i, -1, -1):
+            if seats[j] == 0:
+                rightArr[j] = prev
+                prev += 1
+            else:
+                rightArr[j] = 0
+                prev = 1
+        
+        max_distance = float('-inf')
+
+        for i in range(n):
+            if seats[i] == 0:
+                leftDistance = leftArr[i] if leftArr[i] != -1 else float('inf')
+                rightDistance = rightArr[i] if rightArr[i] != -1 else float('inf')
+                distance = min(leftDistance, rightDistance)
+                max_distance = max(max_distance, distance)
+        return max_distance

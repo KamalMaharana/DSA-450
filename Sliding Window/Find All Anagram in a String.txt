@@ -18,12 +18,13 @@ SC: O(p) i.e the WINDOW SIZE.
 
 Solution: 
 class Solution:
-    from collections import Counter
     def findAnagrams(self, s: str, p: str) -> List[int]:
         if len(p) > len(s): return []
         result = []
         target = defaultdict(lambda: 0)
         window = defaultdict(lambda: 0)
+        
+        # Initializing the window by filling it 1st time
         for i in range(len(p)):
             target[p[i]] += 1
             window[s[i]] += 1
@@ -36,6 +37,10 @@ class Solution:
         else:
             window.pop(s[0])
             
+        # Traversing through the string and sliding the window
+        # l = start of window, r = end of window.
+        # As we have already done for window [0, len(p) - 1], now we start with 
+        # window [1, len(p)] and move 1 step at a time
         l = 1
         r = len(p)
         

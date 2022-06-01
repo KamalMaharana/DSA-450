@@ -1,0 +1,118 @@
+1463. Cherry Pickup II
+You are given a rows x cols matrix grid representing a field of cherries where grid[i][j] 
+represents the number of cherries that you can collect from the (i, j) cell.
+
+You have two robots that can collect cherries for you:
+
+Robot #1 is located at the top-left corner (0, 0), and
+Robot #2 is located at the top-right corner (0, cols - 1).
+Return the maximum number of cherries collection using both robots by following the rules below:
+
+From a cell (i, j), robots can move to cell (i + 1, j - 1), (i + 1, j), or (i + 1, j + 1).
+When any robot passes through a cell, It picks up all cherries, and the cell becomes an empty cell.
+When both robots stay in the same cell, only one takes the cherries.
+Both robots cannot move outside of the grid at any moment.
+Both robots should reach the bottom row in grid.
+ 
+
+Example 1:
+
+Input: grid = [[3,1,1],[2,5,1],[1,5,5],[2,1,1]]
+Output: 24
+Explanation: Path of robot #1 and #2 are described in color green and blue respectively.
+Cherries taken by Robot #1, (3 + 2 + 5 + 2) = 12.
+Cherries taken by Robot #2, (1 + 5 + 5 + 1) = 12.
+Total of cherries: 12 + 12 = 24.
+
+
+Example 2:
+
+Input: grid = [[1,0,0,0,0,0,1],[2,0,0,0,0,3,0],[2,0,9,0,0,0,0],[0,3,0,5,4,0,0],[1,0,2,3,0,0,6]]
+Output: 28
+Explanation: Path of robot #1 and #2 are described in color green and blue respectively.
+Cherries taken by Robot #1, (1 + 9 + 5 + 2) = 17.
+Cherries taken by Robot #2, (1 + 3 + 4 + 3) = 11.
+Total of cherries: 17 + 11 = 28.
+
+
+Approach:
+THIS is DP ON GRID problem, like variation of Maximum Sum Path in a grid.
+Here we cannot take 1 robot 1st and another robot 2nd coz this leads to a wrong path.
+In example 1:
+If we complete the path for robot1 then robot2, 
+we see that we take 3 -> 5 -> 5 -> 2 = 15 for robot1
+And robot2 path = 1 -> 1 -> 5 -> 1 = 8
+robot1 + robot2 = 15 + 8 = 23
+But actual answer = 24 which is maximum, so here in robot1 we missed to take 2, instead we took 5 greedly
+which is why we got wrong answer.
+Instead we move both the ROBOTS together in our recursion and we use DP hashmap for memoization with 
+DFS arguments being the key in our DP, i.e no. of arguments = that degree table
+2 args = 2D table
+1 arg = 1D table
+3  arg = 3D table
+
+As in every step, we are going down the row by 1, i.e we are incementing x by 1, we just keep single 'x' in 
+our DFS and seperate 'y1', 'y2' for ROBOT1 and ROBOT2 columns.
+
+if (x, y1, y2) in dp: return dp[(x, y1, y2)]
+else:
+	if any robot goes our of bounds, we return 0.
+	else:
+		for y1_new in [-1, 0, 1]:
+			for y2_new in [-1, 0, 1]:
+				Find max from all the 3 directions
+				maxi = max(maxi, dfs(x + 1, y1 + y1_new, y2 + y2_new))
+		
+		if y1 == y2:
+			That means both robots are on same cell as we are already in same ROW.
+			Then we include current grid value only once to avoid double counting
+			result = maxi + grid[x][y1]
+		else:
+			result = maxi + grid[x][y1] + grid[x][y2]
+		
+		CACHE this result in DP 
+		dp[(x, y1, y2)] = result
+		return result		
+
+Solution:
+class Solution:
+    def cherryPickup(self, grid: List[List[int]]) -> int:
+        directions = [-1, 0, 1]
+        dp = {}
+        row = len(grid)
+        col = len(grid[0])
+        
+        def isValid(i, j):
+            return 0 <= i < len(grid) and 0 <= j < len(grid[0])
+        
+        # As we are always going down the ROW by 1 for both robots.
+        # And both robots are always at same ROW, so we have only 'x' in dfs
+        # instead of x1, x2 for robot1 and robot2
+        def dfs(x, y1, y2):
+            
+            if (x, y1, y2) in dp:
+                return dp[(x, y1, y2)]
+            
+            # If any of the robot move is not valid and out of bounds, we return 0
+            if not isValid(x, y1) or not isValid(x, y2): 
+                return 0
+            
+            maxi = 0
+            for y1_new in directions:
+                for y2_new in directions:
+                    maxi = max(maxi, dfs(x + 1, y1 + y1_new, y2 + y2_new))
+                    
+            # As both robot will always be at same ROW, but if we reach at same column
+            # SO here as only 1 ROBOT can pick the cheery, so we only counting
+            # grid[x][y] once.
+            res = 0
+            if y1 == y2:
+                res = maxi + grid[x][y1]
+            
+            else:
+                res = maxi + grid[x][y1] + grid[x][y2]
+            
+            dp[(x, y1, y2)] = res
+            return res
+        
+        return dfs(0, 0, col - 1)

@@ -1,0 +1,69 @@
+Given an integer array nums sorted in non-decreasing order, remove some duplicates 
+in-place such that each unique element appears at most twice. 
+The relative order of the elements should be kept the same.
+
+Since it is impossible to change the length of the array in some languages, 
+you must instead have the result be placed in the first part of the array nums. 
+More formally, if there are k elements after removing the duplicates, then the 
+first k elements of nums should hold the final result. It does not matter what 
+you leave beyond the first k elements.
+
+Return k after placing the final result in the first k slots of nums.
+
+Do not allocate extra space for another array. You must do this by modifying 
+the input array in-place with O(1) extra memory.
+
+Example 1:
+
+Input: nums = [1,1,1,2,2,3]
+Output: 5, nums = [1,1,2,2,3,_]
+Explanation: Your function should return k = 5, with the first five elements of nums being 1, 1, 2, 2 
+and 3 respectively.
+It does not matter what you leave beyond the returned k (hence they are underscores).
+Example 2:
+
+Input: nums = [0,0,1,1,1,1,2,3,3]
+Output: 7, nums = [0,0,1,1,2,3,3,_,_]
+Explanation: Your function should return k = 7, with the first seven elements of nums being 0, 0, 1, 1, 2, 3 
+and 3 respectively.
+It does not matter what you leave beyond the returned k (hence they are underscores).
+
+
+Approach:
+Here we use 2-Pointer approach.
+As the array is sorted, instead of storing the frequency in an hashmap, we can directly check
+So, here we take a 'i' pointer that moves over all the values in the array including the duplicates
+And 'j' pointer that keeps track of position where the new value should be filled when previous values
+are repeated twice.
+Effectively you can say 'i' is fast pointer and 'j' is slow pointer.
+if nums[j - 2] == nums[i]:
+	i += 1
+this means the current value is occuring 3rd time in the array, so instead of putting it in the array, we just
+skip over it.
+And when 
+nums[j - 2] != nums[i]:
+then we know that nums[i] is a value that is occuring either 1st or 2nd time which is allowed.
+So we add it to the array by 
+nums[j] = nums[i]
+i += 1
+j += 1
+
+Solution:
+class Solution:
+    def removeDuplicates(self, nums: List[int]) -> int:
+        if len(nums) <= 2: return len(nums)
+        i = 2
+        j = 2
+        while i < len(nums):
+            while nums[j - 2] == nums[i]:
+                i += 1
+                if i >= len(nums): return j
+                val = nums[i]
+            nums[j] = nums[i]
+            i += 1
+            j += 1
+        return j
+
+
+
+

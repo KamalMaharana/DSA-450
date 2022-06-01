@@ -1,0 +1,82 @@
+1094. Car Pooling
+There is a car with capacity empty seats. The vehicle only drives east 
+(i.e., it cannot turn around and drive west).
+
+You are given the integer capacity and an array trips where 
+trip[i] = [numPassengersi, fromi, toi] indicates that the ith trip has numPassengersi passengers 
+and the locations to pick them up and drop them off are fromi and toi respectively. 
+The locations are given as the number of kilometers due east from the car's initial location.
+
+Return true if it is possible to pick up and drop off all passengers for all the given trips, or false otherwise.
+
+ 
+
+Example 1:
+
+Input: trips = [[2,1,5],[3,3,7]], capacity = 4
+Output: false
+
+
+Example 2:
+
+Input: trips = [[2,1,5],[3,3,7]], capacity = 5
+Output: true
+
+
+Approach:
+This might seem similar to Merge Interval problem, but it's not because
+If we have the start travel of length 10; i.e 1 - 10, with 2 people in car
+And then we have 3 small travels of distance 2; eg: 2 - 4, 5 - 7, 8 - 10, with 3 people onboarding in each
+interval
+capacity of car = 5
+So here after every small interval, we insert 3 at start of their journey and remove 3
+Interval 1
+2: add 3 to CAR
+4: remove 3 from CAR
+
+Interval 2
+5: add 3 to CAR
+7: remove 3 from CAR
+
+So at any moment, the number of people doesn't go beyond 5, so we need to find a way to keep track of people
+onboarding and offboarding.
+
+For that we use an array refered as TIME_LINE, it's length will be equal to the farthest destination.
+Here whenever we onbaord, we increment add people on that time in TIME_LINE array.
+When we offboard, we decrement people on that time.
+so for every trip:
+	people = trip[0]
+	onboard_time = trip[1]
+	offboard_time = trip[2]
+	
+	time_line[onboard_time] += people
+	time_line[offboard_time] -= people
+
+By this we will have time_line of people joining and leaving the CAR.
+After this, we want to find out
+IF at any moment, we had max_people_on_car > capacity of the car: 
+	Then we know that it's invalid and we return False
+Else
+	After the iteration completes, we return True
+
+
+Solution:
+class Solution:
+    def carPooling(self, trips: List[List[int]], capacity: int) -> bool:
+        m = max([i for _,_,i in trips])
+        time_line = [0]*(m+1)
+        for i,j,k in trips:
+            people = i
+            onboard_time = j
+            offboard_time = k
+            time_line[onboard_time] += people
+            time_line[offboard_time] -= people
+        
+        max_people_on_car = -1
+        sums = 0
+        for people in time_line:
+            sums += people
+            max_people_on_car = max(max_people_on_car, sums)
+            if max_people_on_car > capacity:
+                return False
+        return True

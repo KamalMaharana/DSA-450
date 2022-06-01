@@ -1,0 +1,54 @@
+An integer has sequential digits if and only if each digit in the number is one more than the previous digit.
+
+Return a sorted list of all the integers in the range [low, high] inclusive that have sequential digits.
+
+
+Example 1:
+
+Input: low = 100, high = 300
+Output: [123,234]
+
+Example 2:
+
+Input: low = 1000, high = 13000
+Output: [1234,2345,3456,4567,5678,6789,12345]
+ 
+
+Constraints:
+
+10 <= low <= high <= 10^9
+
+Approach:
+Here we generate all the increasing digit numbers 123, 234, 456, ...., 123456, 234567, ..... 123456789
+There are total 45 values from 1 to 123456789.
+We generate these values using a queue.
+And then pop from queue and check if low <= val <= high
+
+To generate these values, we start with queue = [1,2,3,4,5,6,7,8,9]
+while queue:
+	elem = queue.popleft()
+	if low <= elem <= high: result.append(elem)
+	last_digit = elem % 10
+	if last_digit < 9:
+		new_num = elem * 10 + (last_digit + 1)
+		queue.append(new_num)
+
+Then return the result array.
+
+Solution:
+class Solution:
+    def sequentialDigits(self, low: int, high: int) -> List[int]:
+        result = []
+        queue = deque(range(1,10))
+        while queue:
+            elem = queue.popleft()
+            if low <= elem <= high:
+                result.append(elem)
+            last_digit = elem % 10
+            if last_digit < 9: 
+                new_num = elem*10 + last_digit + 1
+                queue.append(new_num)
+                    
+        return result
+
+

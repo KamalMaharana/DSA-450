@@ -1,0 +1,73 @@
+Question:
+Short Explanation of question
+Check if a Graph can be colored with only 2 colors and no adjacent nodes should have same color.
+If neighbours have same color; return False
+Else return True
+
+The above statement is simpler definition of Bipartite Graph.
+
+Actual Question Wordings
+There is an undirected graph with n nodes, where each node is numbered between 0 and n - 1. You are given a 2D array graph, where graph[u] is an array of nodes that node u is adjacent to. More formally, for each v in graph[u], there is an undirected edge between node u and node v. The graph has the following properties:
+
+There are no self-edges (graph[u] does not contain u).
+There are no parallel edges (graph[u] does not contain duplicate values).
+If v is in graph[u], then u is in graph[v] (the graph is undirected).
+The graph may not be connected, meaning there may be two nodes u and v such that there is no path between them.
+A graph is bipartite if the nodes can be partitioned into two independent sets A and B such that every edge in the graph connects a node in set A and a node in set B.
+
+Return true if and only if it is bipartite.
+
+Explanation:
+This solution is BFS solution
+This solution is somewhat similar to ROTTEN ORANGES where you pass [node, value] in the queue so that
+you can use that value in the next state of iteration.
+
+Here the value is color.
+We need to color all the nodes.
+So run a for loop on the lenght of the array (as graph nodes are just indexes of the list)
+Inside this loop, run the BFS
+check if current node is not colored, then put it in the queue and start the BFS.
+In BFS, check see if the node is colored and the color is not equal to curr_color: return True
+This means we found neighbours with same color.
+if not colored: then assign the color to that node.
+The loop through neighbours and new_color = -1 * curr_color
+in this loop, check for color and if the neighbour is not colored then and only then push it in queue.
+After loop is over, retur True
+
+Solution:
+class Solution:
+    def isBipartite(self, graph: List[List[int]]) -> bool:
+        queue = []
+        color = [0] * len(graph)
+        count = len(graph)
+        for i in range(len(graph)):
+            if color[i] == 0:
+                queue = [[i,1]]
+            
+            while queue:
+                # print(queue)
+                node, curr_color = queue.pop()
+                if color[node] != 0 and color[node] != curr_color:
+                    return False
+                color[node] = curr_color
+                count -= 1
+                new_color = curr_color * -1
+                # if len(graph[node]) == 0:
+                #     return False
+                for baju_wala in graph[node]:
+                    if color[baju_wala] != 0:
+                        if color[baju_wala] != new_color:
+                            return False
+                        continue
+                    queue.append([baju_wala, new_color])
+        
+        return True
+
+
+
+
+
+
+
+
+

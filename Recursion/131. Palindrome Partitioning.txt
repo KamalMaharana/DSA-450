@@ -1,0 +1,103 @@
+131. Palindrome Partitioning
+Given a string s, partition s such that every substring of the partition is a palindrome. 
+Return all possible palindrome partitioning of s.
+
+A palindrome string is a string that reads the same backward as forward.
+
+ 
+
+Example 1:
+
+Input: s = "aab"
+Output: [["a","a","b"],["aa","b"]]
+
+Example 2:
+
+Input: s = "a"
+Output: [["a"]]
+
+Approach:
+This is a RECURSION problem where we have to go through every possible partitioning.
+For a given string:
+	we will check if s[start : end] is palindrome:
+		Yes; then we add s[start : end] to PARTITION list and call dfs on remaining string
+		dfs(partition + [s[start : end]], end + 1)
+
+We break our recursion when start >= len(s); this means we have evaluated all the possible substring
+When base case happens, we append current PARTITION list that was part of recursion path, we append it to
+RESULT list.
+Eg: "aba"
+                "aba"
+			   /  |   \
+			["a"]  "ab" ["aba"]
+			/  \
+		   ["b"]  "ba"
+		   /
+		 ["a"]
+
+		Result = [["a", "b", "a"],["aba"]]
+
+Here in above decision tree, we don't move ahead when the current string range 
+i.e s[start : end] is not a PALINDROME.
+
+Solution:
+1. Backtracking
+class Solution:
+    def partition(self, s: str) -> List[List[str]]:
+        
+        def isPalindrome(s, l, r):
+            while l <= r:
+                if s[l] != s[r]:
+                    return False
+                l += 1
+                r -= 1
+            return True
+            
+        
+        result = []
+        def dfs(partition, start):
+            if start >= len(s):
+                result.append(partition)
+                return
+            
+            for end in range(start, len(s)):
+                if isPalindrome(s, start, end):
+                    dfs(partition + [s[start : end + 1]], end + 1)
+        
+        dfs([], 0)
+        return result
+
+2. Backtracking + DP
+class Solution:
+    def partition(self, s: str) -> List[List[str]]:
+        dp = defaultdict(lambda: defaultdict(lambda: False))
+        for i in range(len(s)):
+            dp[i][i] = True
+        
+        def isPalindrome(s, l, r):
+            left = l
+            right = r
+            while l <= r:
+                if s[l] != s[r]:
+                    return False
+                if dp[l][r]:
+                    dp[left][right] = True
+                    return True
+                l += 1
+                r -= 1
+            dp[left][right] = True
+            return True
+            
+        
+        result = []
+        def dfs(partition, start):
+            if start >= len(s):
+                result.append(partition)
+                return
+            
+            for end in range(start, len(s)):
+                if isPalindrome(s, start, end):
+                    dfs(partition + [s[start : end + 1]], end + 1)
+        
+        dfs([], 0)
+        return result

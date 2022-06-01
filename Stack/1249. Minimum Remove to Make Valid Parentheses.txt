@@ -1,0 +1,83 @@
+1249. Minimum Remove to Make Valid Parentheses
+Given a string s of '(' , ')' and lowercase English characters.
+
+Your task is to remove the minimum number of parentheses ( '(' or ')', in any positions ) so that the resulting parentheses string is valid and return any valid string.
+
+Formally, a parentheses string is valid if and only if:
+
+It is the empty string, contains only lowercase characters, or
+It can be written as AB (A concatenated with B), where A and B are valid strings, or
+It can be written as (A), where A is a valid string.
+ 
+
+Example 1:
+
+Input: s = "lee(t(c)o)de)"
+Output: "lee(t(c)o)de"
+Explanation: "lee(t(co)de)" , "lee(t(c)ode)" would also be accepted.
+Example 2:
+
+Input: s = "a)b(c)d"
+Output: "ab(c)d"
+Example 3:
+
+Input: s = "))(("
+Output: ""
+Explanation: An empty string is also valid.
+
+
+Approach:
+As this is a Valid Paranthesis problem, we will use STACK.
+We will run a loop.
+If ch == "(":
+	we append the index to stack
+	stack.append(i)
+elif ch == ")":
+	if stack is not empty:
+		this means we found a matching pair of brackets
+		pop from stack 
+		stack.pop()
+	else:
+		replace value in current index with empty string "",
+		this indicates that this is an extra closing bracket with no opening brackets to match.
+
+		
+After this loop, in the stack we will have all the indexes of extra opening brackets that don't have a 
+matching closing bracket to form a pair.
+while stack is not empty:
+	i = stack.pop()
+	replace the opening bracket at this index with empty string ""
+	s[i] = ""
+
+return "".join(s)
+
+Solution:
+class Solution:
+    def minRemoveToMakeValid(self, s: str) -> str:
+        s = list(s)
+        stack = []
+        for i, ch in enumerate(s):
+            if ch == "(":
+                stack.append(i)
+            elif ch == ")":
+                if stack:
+                    stack.pop()
+                else:
+                    s[i] = ""
+        while stack:
+            i = stack.pop()
+            s[i] = ""
+                    
+        return "".join(s)
+
+
+
+
+
+
+
+
+
+
+
+

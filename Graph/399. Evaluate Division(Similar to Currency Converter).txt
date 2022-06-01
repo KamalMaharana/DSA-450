@@ -1,0 +1,120 @@
+399. Evaluate Division
+You are given an array of variable pairs equations and an array of real numbers values, where equations[i] = [Ai, Bi] and values[i] represent the equation Ai / Bi = values[i]. Each Ai or Bi is a string that represents a single variable.
+
+You are also given some queries, where queries[j] = [Cj, Dj] represents the jth query where you must find the answer for Cj / Dj = ?.
+
+Return the answers to all queries. If a single answer cannot be determined, return -1.0.
+
+Note: The input is always valid. You may assume that evaluating the queries will not result in division by zero and that there is no contradiction.
+
+ 
+
+Example 1:
+Input: equations = [["a","b"],["b","c"]], values = [2.0,3.0], queries = [["a","c"],["b","a"],["a","e"],["a","a"],["x","x"]]
+Output: [6.00000,0.50000,-1.00000,1.00000,-1.00000]
+Explanation: 
+Given: a / b = 2.0, b / c = 3.0
+queries are: a / c = ?, b / a = ?, a / e = ?, a / a = ?, x / x = ?
+return: [6.0, 0.5, -1.0, 1.0, -1.0 ]
+
+Example 2:
+Input: equations = [["a","b"],["b","c"],["bc","cd"]], values = [1.5,2.5,5.0], queries = [["a","c"],["c","b"],["bc","cd"],["cd","bc"]]
+Output: [3.75000,0.40000,5.00000,0.20000]
+
+Example 3:
+Input: equations = [["a","b"]], values = [0.5], queries = [["a","b"],["b","a"],["a","c"],["x","y"]]
+Output: [0.50000,2.00000,-1.00000,-1.00000]
+
+
+Approach:
+This is a GRAPH problem.
+This question is similar to a real world problem called Currency Conversion.
+In this we need to derive the value of each query from the initial values and mapping we have.
+
+Here we also need to use some basic maths logic.
+If a/b = x; then b/a = 1/x
+Also if we have a/b and b/c, then to find a/c = a/b * b/c
+So we have to use UNDIRECTED GRAPH.
+So we form a graph, where graph[u][v] = value i.e u/v = value
+Also simultaneously we will fill graph[v][u] = 1 / value
+
+So run a loop over the query,
+Check if the variables in the query are present in the graph, 
+if not then add -1.0000 or float(-1) in result array.
+else:
+For query = [a, b] we run a BFS with source = a and target = b, and we start the BFS with value = 1
+
+
+In BFS, we have a queue and a visited set to avoid repetitive computation.
+The queue will have values in this format 
+queue = [[node, value]]
+while queue:
+	if node == target: return value
+	if node is visited: continue
+	add node in visited set
+	for neighbour in graph[node]:
+		if neighbour is not visited:
+			new_value = current_value * graph[node][neighbour] (a/b * b/c * ....)
+			queue.append([neighbour, new_value])
+
+If the loops completes, that means we cannot find the query result with current mapping, we return float(-1)
+
+
+Solution:
+class Solution:
+    def calcEquation(self, equations: List[List[str]], values: List[float], queries: List[List[str]]) -> List[float]:
+        
+        def bfs(source, target, value):
+            queue = [[source, value]]
+            visited = set()
+            while queue:
+                
+                node, val = queue.pop(0)
+                if node == target:
+                    return val
+                if node in visited:
+                    continue
+                visited.add(node)
+                
+                for baju_wala in graph[node]:
+                    if baju_wala not in visited:
+                        new_val = val * graph[node][baju_wala]
+                        queue.append([baju_wala, new_val])
+            
+            return float(-1)
+                
+        
+        graph = {}
+        for i in range(len(values)):
+            u, v = equations[i]
+            value = values[i]
+            rev_value = 1 / value
+            if u in graph:
+                graph[u][v] = value
+            else:
+                graph[u] = {v: value}
+            if v in graph:
+                graph[v][u] = rev_value
+            else:
+                graph[v] = {u: rev_value}
+        
+        
+        result = []
+        for a, b in queries:
+            if a not in graph or b not in graph:
+                result.append(float(-1))
+            else:
+                res = bfs(a, b, 1)
+                result.append(res)
+                
+        
+        return result
+
+
+
+
+
+
+
+
+

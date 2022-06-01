@@ -1,0 +1,67 @@
+946. Validate Stack Sequences
+Given two integer arrays pushed and popped each with distinct values, 
+return true if this could have been the result of a sequence of push and pop operations
+on an initially empty stack, or false otherwise.
+
+Example 1:
+
+Input: pushed = [1,2,3,4,5], popped = [4,5,3,2,1]
+Output: true
+Explanation: We might do the following sequence:
+push(1), push(2), push(3), push(4),
+pop() -> 4,
+push(5),
+pop() -> 5, pop() -> 3, pop() -> 2, pop() -> 1
+
+Example 2:
+
+Input: pushed = [1,2,3,4,5], popped = [4,3,5,1,2]
+Output: false
+Explanation: 1 cannot be popped before 2.
+
+Approach:
+Here we need to use stack, it looks like a bluff that the question says to validate stack operations
+and the approach to solve it is to emulate the operation in a stack.
+
+So here we need to decide when to push and when to pop. 
+When we look at the example and the question, it says the word SEQUENCE
+That means some values cannot be popped before some value.
+That also means that if a value is in the stack, that value is only able to be popped.
+And we can only pop the top value and not any value from any position of the stack.
+
+But taking a look at all the above observations, we came to a conclusion that 
+We will POP from the stack as soon as the value comes on top of stack.
+Suppose 'j' is keeping track of the value to be popped so it initially points to 0th index.
+Als 'i' is keeping track of pushed values.
+while stack[j] == popped[j]:
+	we pop from stack and move the 'j' pointer.
+	stack.pop()
+	j += 1
+
+And then we will push a value in stack if i < len(pushed): i.e if there are any values remaining to 
+be pushed.
+if i < len(pushed):
+	stack.append(pushed[i])
+
+We will do the above operations till stack is not empty or if we reach a invalid state.
+Invalid State: if i == len(pushed) and stack[-1] != popped[j]
+This means there are no values to push and at the same time we cannot pop coz the values are not matching.
+This is a invalid state that helps to resolve Example 2 from above.
+
+
+Solution:
+class Solution:
+    def validateStackSequences(self, pushed: List[int], popped: List[int]) -> bool:
+        stack = [pushed[0]]
+        i = 1
+        j = 0
+        while stack:
+            if i == len(pushed) and stack[-1] != popped[j]:
+                return False
+            while stack and j < len(popped) and stack[-1] == popped[j]:
+                stack.pop()
+                j += 1
+            if i < len(pushed):
+                stack.append(pushed[i])
+                i += 1
+        return True
