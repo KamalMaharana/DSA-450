@@ -81,3 +81,29 @@ class Trie:
 # obj.insert(word)
 # param_2 = obj.search(word)
 # param_3 = obj.startsWith(prefix)
+
+
+
+class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.index = 0
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, word, index): #None
+        root = self.root
+        root.index = index
+        for symbol in word:
+            root = root.children.setdefault(symbol, TrieNode())
+            root.index = index
+        
+    def startsWith(self, word):
+        root = self.root
+        for symbol in word:
+            if symbol not in root.children:
+                return -1
+            root = root.children[symbol]
+        return root.index  

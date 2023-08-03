@@ -1,0 +1,108 @@
+120. Triangle
+Solution Link: https://leetcode.com/problems/triangle/discuss/38730/DP-Solution-for-Triangle
+
+Given a triangle array, return the minimum path sum from top to bottom.
+
+For each step, you may move to an adjacent number of the row below. More formally, 
+if you are on index i on the current row, you may move to either index i or index i + 1 on the next row.
+
+ 
+
+Example 1:
+
+Input: triangle = [[2],[3,4],[6,5,7],[4,1,8,3]]
+Output: 11
+Explanation: The triangle looks like:
+   2
+  3 4
+ 6 5 7
+4 1 8 3
+The minimum path sum from top to bottom is 2 + 3 + 5 + 1 = 11 (underlined above).
+
+Example 2:
+
+Input: triangle = [[-10]]
+Output: -10
+ 
+
+Constraints:
+
+1 <= triangle.length <= 200
+triangle[0].length == 1
+triangle[i].length == triangle[i - 1].length + 1
+-104 <= triangle[i][j] <= 104
+
+
+
+Explanation:
+This is a DP Problem.
+Looking at the problem, we can get the recursive relation.
+Recursive relation is nothing but "What we should do if we are current step?"
+In naive way, it's the BRUTE FORCE.
+Then on that reccursive relation when we use an array or dictionary to cache, that Dynamic Programming.
+
+Here the recursive relation is 
+result = triangle[row][index] + min(dfs(row + 1, index + 1), dfs(row + 1, index))
+Current Answer = current value + min(value of (i + 1) or i of the next row)
+
+So start from 0 row, 0 index and make the recursive call until you reach the last row.
+After last row, every value is invalid so that becomes our STOPPING CONDITION of our recursion.
+if index is not valid:
+	return 0
+So here in dfs, we can see there are 2 values changing (row, index)
+, so we can use a 2D Cache, either a dictionary or array, that's for TOP DOWN DP.
+
+For BOTTOM UP DP, we should start from bottom most row, and move upwards.
+'Bottom-up' DP, on the other hand, is very straightforward: we start from 
+the nodes on the bottom row; the min pathsums for these nodes are the values
+of the nodes themselves. From there, the min pathsum at the ith node on the
+kth row would be the lesser of the pathsums of its two children plus the value of itself, i.e.:
+
+minpath[k][i] = min( minpath[k+1][i], minpath[k+1][i+1]) + triangle[k][i];
+
+Or even better, since the row minpath[k+1] would be useless after minpath[k] 
+is computed, we can simply set minpath as a 1D array, and iteratively update itself:
+k + 1 is the previous values we computed row, i.e row below k'th row.
+In DP Space optimization, we can see here that regardless of the state, row always goes row + 1 in our TOP DOWN
+recursive relation, so as row changes at constant rate i.e always row = row + 1, we can eliminate 'row'
+from the cache and recursive relation to save space.
+For the kth level:
+minpath[i] = min( minpath[i], minpath[i+1]) + triangle[k][i]; 
+
+Code:
+1. TOP DOWN
+class Solution:
+    def minimumTotal(self, triangle: List[List[int]]) -> int:
+        dp = {}
+        def dfs(row, index):
+            if row == len(triangle) - 1:
+                dp[(row, index)] = triangle[row][index]
+                return triangle[row][index]
+            
+            if (row, index) in dp:
+                return dp[(row, index)]
+                
+            result = triangle[row][index] + min(dfs(row + 1, index + 1), dfs(row + 1, index))
+            dp[(row, index)] = result
+            return result
+        
+        dfs(0, 0)
+        return dp[(0, 0)]
+		
+2. Bottom Up:
+int minimumTotal(vector<vector<int> > &triangle) {
+    int n = triangle.size();
+    vector<int> minlen(triangle.back());
+    for (int layer = n-2; layer >= 0; layer--) // For each layer
+    {
+        for (int i = 0; i <= layer; i++) // Check its every 'node'
+        {
+            // Find the lesser of its two children, and sum the current value in the triangle with it.
+            minlen[i] = min(minlen[i], minlen[i+1]) + triangle[layer][i]; 
+        }
+    }
+    return minlen[0];
+}
+
+
+

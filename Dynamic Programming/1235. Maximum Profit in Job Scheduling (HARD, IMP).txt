@@ -1,0 +1,96 @@
+1235. Maximum Profit in Job Scheduling
+We have n jobs, where every job is scheduled to be done from startTime[i] to endTime[i], 
+obtaining a profit of profit[i].
+
+You're given the startTime, endTime and profit arrays, return the maximum profit 
+you can take such that there are no two jobs in the subset with overlapping time range.
+
+If you choose a job that ends at time X you will be able to start another job that starts at time X.
+
+
+Example 1:
+
+Input: startTime = [1,2,3,3], endTime = [3,4,5,6], profit = [50,10,40,70]
+Output: 120
+Explanation: The subset chosen is the first and fourth job. 
+Time range [1-3]+[3-6] , we get profit of 120 = 50 + 70.
+
+Example 2:
+
+Input: startTime = [1,2,3,4,6], endTime = [3,5,10,6,9], profit = [20,20,100,70,60]
+Output: 150
+Explanation: The subset chosen is the first, fourth and fifth job. 
+Profit obtained 150 = 20 + 70 + 60.
+
+Example 3:
+
+Input: startTime = [1,1,1], endTime = [2,3,4], profit = [5,6,4]
+Output: 6
+
+
+Approach:
+This is similar to 0/1 Knapsack problem.
+If we sort jobs by start time, starting from job index cur = 0, we might either schedule the jobs[cur] or not.
+
+If we schedule jobs[cur], 
+the problem becomes profit of jobs[cur] + max profit of scheduling jobs starting from next available job index.
+If we don't schedule jobs[cur], the problem becomes max profit of scheduling jobs starting from cur + 1.
+We choose the one giving more profits.
+
+After observation, there are overlapped subproblems, so we can utilize either memoization or bottom-up DP.
+
+
+Code:
+class Solution:
+    def jobScheduling(self, startTime: List[int], endTime: List[int], profit: List[int]) -> int:
+        
+        def getJobs():
+            jobs = []
+            n = len(startTime)
+            for i in range(n):
+                jobs.append([startTime[i], endTime[i], profit[i]])
+            return sorted(jobs)
+        
+        def getNextAvailableJob(curr, jobs):
+            curr_end = jobs[curr][1]
+            for i in range(curr + 1, len(jobs)):
+                job = jobs[i]
+                next_start = job[0]
+                if next_start >= curr_end:
+                    return i
+            return 0
+        
+        
+        def dfs(curr, jobs):
+            # There are no more jobs to choose, reached the end
+            if curr == len(jobs):
+                return 0
+            
+            if curr in dp:
+                return dp[curr]
+            
+            next_job = getNextAvailableJob(curr, jobs)
+            curr_job = jobs[curr]
+            curr_profit = curr_job[2]
+            profit = 0
+            
+            if next_job:
+                profit_including_current_job = curr_profit + dfs(next_job, jobs)
+            else:
+                profit_including_current_job = curr_profit
+            profit_excluding_current_job = dfs(curr + 1, jobs)
+            profit = max(profit_including_current_job, profit_excluding_current_job)
+            
+            dp[curr] = profit
+            return profit
+            
+        
+        def main():
+            jobs = getJobs()
+            result = dfs(0, jobs)
+            return result
+        
+        dp = {}
+        return main()
+        
+

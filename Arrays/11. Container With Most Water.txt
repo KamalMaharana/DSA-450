@@ -1,0 +1,55 @@
+11. Container With Most Water
+You are given an integer array height of length n. There are n vertical lines drawn such 
+that the two endpoints of the ith line are (i, 0) and (i, height[i]).
+
+Find two lines that together with the x-axis form a container, such that the container contains the most water.
+
+Return the maximum amount of water a container can store.
+
+Notice that you may not slant the container.
+
+Approach:
+Use 2 pointers.
+i = Start 
+j = End
+A box/rectangle with 2 sides can only handle water upto the hieght which is minimum among 2 heights
+
+|
+|--------|
+|--------|
+|--------|
+
+In the above rectangle/box, max height where the water will be stored is right side that is the smaller 
+of the 2 sides.
+
+So as we need maximum area, we need maximum lenght and maximum height of the box.
+So we start from extreme ends i.e full length, that then keep shrinking until we get the heighest area box.
+
+height = min(height[i], height[j])
+length = j - i
+area = length * height
+result = max(result, area)
+
+So now we want to shrink window i.e change height and reduce length, and try to acheive maximum area
+if height[j] < height[i]:
+	keep maximum, discard minimum
+	j -= 1 throw 'j'
+elif height[j] > height[i]:
+	keep maximum, discard minimum
+	i += 1 throw 'i'
+
+Run this in a loop till i < j
+Code:
+class Solution:
+    def maxArea(self, height: List[int]) -> int:
+        result = 0
+        i = 0
+        j = len(height)-1
+        while i < j:
+            result = max(min(height[i], height[j]) * (j - i), result)
+            if height[j] < height[i]:
+                j -= 1
+            else:
+                i += 1
+        return result
+        

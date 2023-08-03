@@ -1,0 +1,71 @@
+974. Subarray Sums Divisible by K
+Given an integer array nums and an integer k, 
+return the number of non-empty subarrays that have a sum divisible by k.
+
+A subarray is a contiguous part of an array.
+
+Example 1:
+
+Input: nums = [4,5,0,-2,-3,1], k = 5
+Output: 7
+Explanation: There are 7 subarrays with a sum divisible by k = 5:
+[4, 5, 0, -2, -3, 1], [5], [5, 0], [5, 0, -2, -3], [0], [0, -2, -3], [-2, -3]
+
+Example 2:
+
+Input: nums = [5], k = 9
+Output: 0
+
+Constraints:
+
+1 <= nums.length <= 3 * 10^4
+-10^4 <= nums[i] <= 10^4
+2 <= k <= 104
+
+Approach:
+Somewhat similar to Subarray sum equals K
+k = 5
+[4,5,0,-2,-3,1]
+prefix = [4,9,9,7,4,5]
+remain = [4,4,4,2,4,0]
+
+So ex: rem = 4, now if we add n*k to it
+then and only then the frequency will be 
+4 again.
+4 + n*k = remainder[4]
+Like rem = 4, k = 5
+4 + 5 = 9; 9 % 5 = 4
+4 + 10 = 14; 14 % 5 = 4
+4 + 15 = 19; 19 % 5 = 4
+4 + 20 = 24; 24 % 5 = 4
+So if at 4'th position, if rem = 4
+and after 10 steps, we again got rem = 4
+that means 
+value at 4th + n*k = value at 10th
+and remainder[4] == remainder[10]
+
+So simply, have a frequency map of remainders.
+And remainders will be of the running sum.
+And when we encounter a remainder that is already present in the map, 
+result += frequency[remainder]
+
+Solution:
+class Solution:
+    def subarraysDivByK(self, nums: List[int], k: int) -> int:
+        # frequency table to store the frequency of the remainder
+        remainderFrq = defaultdict(int)
+        # Empty sub array will have a sum of 0 and remainder of 0, thus the frequency of 0 is 1 before we go into the array
+        remainderFrq[0] = 1
+        
+        res = prefixSum = 0
+        for n in nums:
+            # Adding n to the prefixSum, so we have the prefixSum up to the ith position.
+            prefixSum += n
+            # Get the remainder of the current prefixSum.
+            remainder = prefixSum % k
+            # We need to increase the result before update the frequency table.
+            # Because we are counting how many previous prefixSum have the same remainder.
+            res += remainderFrq[remainder]
+            # Update the frequency table.
+            remainderFrq[remainder] += 1
+        return res

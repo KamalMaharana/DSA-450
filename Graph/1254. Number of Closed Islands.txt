@@ -1,0 +1,70 @@
+1254. Number of Closed Islands
+
+Given a 2D grid consists of 0s (land) and 1s (water). 
+An island is a maximal 4-directionally connected group of 0s and 
+a closed island is an island totally (all left, top, right, bottom) surrounded by 1s.
+
+Return the number of closed islands.
+
+Approach:
+This question looks similar to counting Islands and Surrounding regions.
+Here 1st we need to eliminate all the components that are connected to the boundaries.
+Then whatever island is pending count of of them and that is the answer.
+There are 2 DFS functions,
+In 1st DFS we mark all the components that are connected to the boundary.
+Then in 2nd DFS we count all the legit islands.
+
+
+Code:
+class Solution:
+    def closedIsland(self, grid: List[List[int]]) -> int:
+        row = len(grid)
+        col = len(grid[0])
+        def isBoundary(i, j):
+            return 0 <= i < row and 0 <= j < col
+        
+        def isWater(i, j):
+            return grid[i][j] == 1
+        
+        def dfs(i, j):
+            if not isBoundary(i, j) or grid[i][j] == -1 or isWater(i, j):
+                return 0
+            
+            grid[i][j] = -1
+            left = dfs(i, j - 1)
+            right = dfs(i, j + 1)
+            top = dfs(i - 1, j)
+            bottom = dfs(i + 1, j)
+            return 1
+            
+        
+        for i in [0, row - 1]:
+            for j in range(0, col):
+                if grid[i][j] == 0:
+                    dfs(i, j)
+        
+        for i in range(0, row):
+            for j in [0, col - 1]:
+                if grid[i][j] == 0:
+                    dfs(i, j)
+        
+        def dfs2(i, j):
+            if not isBoundary(i, j) or grid[i][j] != 0:
+                return 0
+            
+            grid[i][j] = -1
+            left = dfs(i, j - 1)
+            right = dfs(i, j + 1)
+            top = dfs(i - 1, j)
+            bottom = dfs(i + 1, j)
+            return 1
+
+        # print(grid)
+        result = 0
+        for i in range(row):
+            for j in range(col):
+                if grid[i][j] == 0:
+                    result += dfs2(i, j)
+        return result
+
+        

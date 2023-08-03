@@ -1,0 +1,49 @@
+714. Best Time to Buy and Sell Stock with Transaction Fee
+You are given an array prices where prices[i] is the price of a given stock on the ith day, 
+and an integer fee representing a transaction fee.
+
+Find the maximum profit you can achieve. You may complete as many transactions as you like, 
+but you need to pay the transaction fee for each transaction.
+
+Note: You may not engage in multiple transactions simultaneously 
+(i.e., you must sell the stock before you buy again).
+
+
+Approach:
+Similar approach as Buy and Sell stock with Cooldown.
+For each stock we have 2 option, either buy or sell.
+But we have to start with buy because without owning any stock you cannot sell.
+So when you buy, then next step you can either sell or don't buy the current stock.
+if you buy, then the profit will be next time when you sell - current stock price
+dfs(i + 1, sell) - price[curr_stock],
+OR you can just skip.
+Similarly, if you have operation as sell, then in next operation you can buy 
+OR you don't sell at current price.
+If you sell, we get this price and check further if we can again buy anything
+dfs(i + 1, buy) + price[curr_stock],
+
+On selling we deduct the transaction fee.
+
+Code:
+class Solution:
+    def maxProfit(self, prices: List[int], fee: int) -> int:
+        dp = {}
+        def dfs(i, buying):
+            if i >= len(prices):
+                return 0
+            
+            if (i, buying) in dp:
+                return dp[(i, buying)]
+            if buying:
+                # On buying, do selling - cost
+                # so not buying means selling, and price[i] = cost
+                buy = dfs(i + 1, not buying) - prices[i]
+                skip = dfs(i + 1, buying)
+                dp[(i, buying)] = max(buy, skip)
+            else:
+                sell = dfs(i + 1, not buying) + prices[i] - fee
+                skip = dfs(i + 1, buying)
+                dp[(i, buying)] = max(sell, skip)
+
+            return dp[(i, buying)]
+        return dfs(0, True)

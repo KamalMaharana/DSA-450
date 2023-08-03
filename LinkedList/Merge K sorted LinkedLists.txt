@@ -1,0 +1,85 @@
+23. Merge k Sorted Lists
+
+You are given an array of k linked-lists lists, each linked-list is sorted in ascending order.
+
+Merge all the linked-lists into one sorted linked-list and return it.
+
+Example 1:
+
+Input: lists = [[1,4,5],[1,3,4],[2,6]]
+Output: [1,1,2,3,4,4,5,6]
+Explanation: The linked-lists are:
+[
+  1->4->5,
+  1->3->4,
+  2->6
+]
+merging them into one sorted list:
+1->1->2->3->4->4->5->6
+Example 2:
+
+Input: lists = []
+Output: []
+Example 3:
+
+Input: lists = [[]]
+Output: []
+
+
+Approach:
+Use merge sort approach.
+Go to middle, sort left half, sort right half, then merge both halves.
+Here we recursively drill down to get single lists from the K lists of LinkedLists that we have.
+Once we get down to single LinkedList in left and right pointer, we merge them 2 just like we do in 
+Merge Sort with 2 arrays.
+
+After this, once we get the combined LinkedList that is merged in a sorted manner, we roll up the recursion tree.
+Till we merge all the LinkedLists present in the list.
+
+
+Code:
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution(object):
+    def mergeKLists(self, lists):
+        if not lists:
+            return None
+        if len(lists) == 1:
+            return lists[0]
+        mid = len(lists) // 2
+        l, r = self.mergeKLists(lists[:mid]), self.mergeKLists(lists[mid:])
+        return self.merge(l, r)
+    
+    # Iterative way of merging 2 LinkedLists
+    def merge(self, l, r):
+        dummy = p = ListNode()
+        while l and r:
+            if l.val < r.val:
+                p.next = l
+                l = l.next
+            else:
+                p.next = r
+                r = r.next
+            p = p.next
+        # This means, if l == None, take r, else r == None, take l.
+        p.next = l or r
+        # Dummy if used to keep track of head after all the manipulation of p, coz p will be at end after loop.
+        return dummy.next
+    
+    # Recursive way of merging 2 LinkedLists
+    def merge1(self, l, r):
+        if not l or not r:
+            return l or r
+        if l.val< r.val:
+            l.next = self.merge(l.next, r)
+            return l
+        r.next = self.merge(l, r.next)
+        return r
+
+
+
+
+

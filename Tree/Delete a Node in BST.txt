@@ -6,8 +6,8 @@ the same until we get to a leaf node.
 In Striver's way, we reach the required node; 
 then If we can replace it with it's RIGHT or LEFT child.
 Consider "req_node" as the node to be deleted
-If RIGHT; then we have to attach the LEFT child in the RIGHT Subtree
-If LEFT; then we have to attach the RIGHT child in LEFT Subtree
+If RIGHT; then we have to attach the LEFT most child in the RIGHT Subtree
+If LEFT; then we have to attach the RIGHT most child in LEFT Subtree
 If we replace the node with RIGHT child then do the following.
 	1. Find the smallest value in RIGHT subtree and store in "right_child".
 	2. Then we attach the left subtree to the above found "right_child.left"

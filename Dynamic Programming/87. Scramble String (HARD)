@@ -1,0 +1,124 @@
+87. Scramble String (HARD)
+
+We can scramble a string s to get a string t using the following algorithm:
+
+If the length of the string is 1, stop.
+If the length of the string is > 1, do the following:
+Split the string into two non-empty substrings at a random index, i.e., if the string is s, 
+divide it to x and y where s = x + y.
+Randomly decide to swap the two substrings or to keep them in the same order. i.e., 
+after this step, s may become s = x + y or s = y + x.
+Apply step 1 recursively on each of the two substrings x and y.
+Given two strings s1 and s2 of the same length, 
+return true if s2 is a scrambled string of s1, 
+otherwise, return false.
+
+Example 1:
+
+Input: s1 = "great", s2 = "rgeat"
+Output: true
+Explanation: One possible scenario applied on s1 is:
+"great" --> "gr/eat" // divide at random index.
+"gr/eat" --> "gr/eat" // random decision is not to swap the two substrings and keep them in order.
+"gr/eat" --> "g/r / e/at" // apply the same algorithm recursively on both substrings. divide at random index each of them.
+"g/r / e/at" --> "r/g / e/at" // random decision was to swap the first substring and to keep the second substring in the same order.
+"r/g / e/at" --> "r/g / e/ a/t" // again apply the algorithm recursively, divide "at" to "a/t".
+"r/g / e/ a/t" --> "r/g / e/ a/t" // random decision is to keep both substrings in the same order.
+The algorithm stops now, and the result string is "rgeat" which is s2.
+As one possible scenario led s1 to be scrambled to s2, we return true.
+
+Example 2:
+
+Input: s1 = "abcde", s2 = "caebd"
+Output: false
+
+Example 3:
+
+Input: s1 = "a", s2 = "a"
+Output: true
+
+Approach:
+Approach
+We will first check the base cases i.e., if the two strings are equal or not or if they are of different sizes. Then, we will create a key for the current problem by concatenating the two strings and storing it in a dictionary to avoid repeated computations. We will iterate over all possible splits of the current string and check whether we need to swap the left and right substrings or not. We will then make recursive calls on these two substrings and return true if any of the calls return true.
+
+Complexity
+Time complexity: O(n^4)
+since for each character in s1, we are trying out all possible splits of the string which takes )O(n^2)
+ ) time and we are calling the recursion twice for each split which takes another O(n^2)
+ ) time. And for each such problem, we are storing it in a dictionary which takes O(1) time. So overall time complexity is O(n^4)
+
+Space complexity: O(n^3)
+since we are using a dictionary to store previously solved problems and the depth of the recursion tree can go up to n. Therefore, the space complexity of this solution is O(n^3).
+
+Code:
+class Solution(object):
+    def isScramble(self, s1, s2):
+        """
+        :type s1: str
+        :type s2: str
+        :rtype: bool
+        """
+        # Base cases
+
+        n = len(s1)
+
+        # If both strings are not equal in size
+        if len(s2) != n:
+            return False
+
+        # If both strings are equal
+        if s1 == s2:
+            return True
+
+        # If code is reached to this condition then following this are sure:
+        # 1. size of both string is equal
+        # 2. string are not equal
+        # so size is equal (where size==1) and they are not equal then obviously false
+        # example 'a' and 'b' size is equal, string are not equal
+        if n == 1:
+            return False
+
+        key = s1 + " " + s2
+
+        # Check if this problem has already been solved
+        if key in self.mp:
+            return self.mp[key]
+
+        # For every iteration it can two condition
+        # 1. We should proceed without swapping
+        # 2. We should swap before looking next
+        for i in range(1, n):
+            # ex of without swap: gr|eat and rg|eat
+            without_swap = (
+                # Left part of first and second string
+                self.isScramble(s1[:i], s2[:i])
+                and
+                # Right part of first and second string;
+                self.isScramble(s1[i:], s2[i:])
+            )
+
+            # If without swap gives us the right answer then we do not need
+            # to call the recursion with swap
+            if without_swap:
+                return True
+
+            # ex of with swap: gr|eat rge|at
+            # here we compare "gr" with "at" and "eat" with "rge"
+            with_swap = (
+                # Left part of first and right part of second
+                self.isScramble(s1[:i], s2[n-i:])
+                and
+                # Right part of first and left part of second
+                self.isScramble(s1[i:], s2[:n-i])
+            )
+
+            # If with swap gives us the right answer then we return True
+            # otherwise, the for loop does its work
+            if with_swap:
+                return True
+
+        self.mp[key] = False
+        return False
+
+    # for storing already solved problems
+    mp = {}

@@ -1,0 +1,72 @@
+918. Maximum Sum Circular Subarray
+Given a circular integer array nums of length n, return the maximum possible sum of a non-empty subarray of nums.
+
+A circular array means the end of the array connects to the beginning of the array. 
+Formally, the next element of nums[i] is nums[(i + 1) % n] and the previous element of nums[i] is nums[(i - 1 + n) % n].
+
+A subarray may only include each element of the fixed buffer nums at most once. 
+Formally, for a subarray nums[i], nums[i + 1], ..., nums[j], 
+there does not exist i <= k1, k2 <= j with k1 % n == k2 % n.
+
+ 
+
+Example 1:
+
+Input: nums = [1,-2,3,-2]
+Output: 3
+Explanation: Subarray [3] has maximum sum 3.
+Example 2:
+
+Input: nums = [5,-3,5]
+Output: 10
+Explanation: Subarray [5,5] has maximum sum 5 + 5 = 10.
+Example 3:
+
+Input: nums = [-3,-2,-3]
+Output: -2
+Explanation: Subarray [-2] has maximum sum -2.
+
+Approach:
+The maximum subarray sum in circular array is maximum of following
+
+Maximum subarray sum in non circular array
+Maximum subarray sum in circular array.
+Example - [1,2,5,-2,-3,5]
+Steps -
+
+Find the maximum subarray sum using Kadane Algorithm. This is maximum sum for non circular array.
+1+2+5 =8
+For non circular sum,
+Step 1) find the minimum subarray sum of array.
+-2-3 =-5
+Step 2) Now find the total sum of array = 1 + 2 + 5 -2 - 3 + 5 = 8
+Step 3) The max subarray sum for circular array = Total Sum - Minimum subarray Sum
+= 8 - (-5) = 8 + 5 =13
+As illustrated above, substracting minimum subarray sum from total sum gives maximum circular subarray sum.
+Answer = Max ( Non circular max sum + circular max sum )= max(8,13) = 13
+Code -
+The trick here is that to find the minimum subarray sum, we invert the sign of all the numbers in original subarray,
+and find the maximum subarray sum using Kadane algorithm. Then add it with the total sum. 
+(which is similar to
+[total - minimum subarray sum ])
+
+Code:
+class Solution:
+    def maxSubarraySumCircular(self, A: List[int]) -> int:
+        k = self.Kadane(A)
+        
+        CS = 0
+        for i in range(len(A)):
+            CS += A[i]
+            A[i] = -A[i]
+        CS += self.Kadane(A)     # Total + Minimum Sum Subarray
+        if CS > k and CS != 0:
+            return CS
+        return k
+    
+    def Kadane(self, nums):
+        curr_sum, max_sum = nums[0], nums[0]
+        for n in nums[1:]:
+            curr_sum = max(n, curr_sum + n)
+            max_sum = max(max_sum, curr_sum)
+        return max_sum

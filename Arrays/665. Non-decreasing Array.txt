@@ -1,0 +1,62 @@
+665. Non-decreasing Array
+Given an array nums with n integers, your task is to check if it 
+could become non-decreasing by modifying at most one element.
+
+We define an array is non-decreasing if nums[i] <= nums[i + 1] holds 
+for every i (0-based) such that (0 <= i <= n - 2).
+
+ 
+
+Example 1:
+
+Input: nums = [4,2,3]
+Output: true
+Explanation: You could modify the first 4 to 1 to get a non-decreasing array.
+
+Example 2:
+
+Input: nums = [4,2,1]
+Output: false
+Explanation: You can't get a non-decreasing array by modify at most one element.
+
+Approach:
+Good Explanation: https://leetcode.com/problems/non-decreasing-array/discuss/1190763/JS-Python-Java-C%2B%2B-or-Simple-Solution-w-Visual-Explanation
+Naive way to think of this is just count pairs where nums[i] > nums[i+1], and if the number is greater than 
+0 then return False.
+But here we are given a choice to edit 1 number and that changes everything.
+Change in 1 number can cause a change in the surrounding.
+As it's relative, lets take an array of length = 4
+arr = [a, b, c, d]
+Case 1: 
+if (a > b and b > c) or (b > c and c > d):
+In this case, we need to change atleast 2 values to make it increasing, so this condition is definetly False.
+
+if (a&c < b < d):
+	arr = [1,3,2,4]
+	in this case either reduce 'b' to 1 or increase 'c' to 2.
+	as its a Non-decreasing array, consecutive values can be same.
+	So in this case we return True
+
+Only scenario where a FALSE result will happen is 
+if (a < b and b > c and a > c and c < d but b > d): b is the max of all
+b > a = d > c
+Even though the count of consecutive elements where nums[i] > nums[i + 1] == 1, but the above mentioned condition 
+is an anomoly.
+then in this case we cannot increase any value to make it Non Decreasing.
+So we need to find such patterns.
+
+
+So we raise False when err_count > 1 or at 'c', we check 
+if nums[i - 2](a) > nums[i](c) and nums[i + 1](d) < nums[i - 1](b):
+then we raise False.
+
+Code:
+class Solution:
+    def checkPossibility(self, N: List[int]) -> bool:
+        err = 0
+        for i in range(1, len(N)):
+            if N[i] < N[i-1]:
+                if err or (i > 1 and i < len(N) - 1 and N[i-2] > N[i] and N[i+1] < N[i-1]):
+                    return False
+                err = 1
+        return True

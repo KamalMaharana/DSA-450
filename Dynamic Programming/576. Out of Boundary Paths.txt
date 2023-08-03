@@ -1,0 +1,55 @@
+576. Out of Boundary Paths
+There is an m x n grid with a ball. The ball is initially at the position [startRow, startColumn]. 
+You are allowed to move the ball to one of the four adjacent cells in the grid 
+(possibly out of the grid crossing the grid boundary). You can apply at most maxMove moves to the ball.
+
+Given the five integers m, n, maxMove, startRow, startColumn, 
+return the number of paths to move the ball out of the grid boundary. 
+Since the answer can be very large, return it modulo 109 + 7.
+
+ 
+Example 1:
+
+Input: m = 2, n = 2, maxMove = 2, startRow = 0, startColumn = 0
+Output: 6
+
+Example 2:
+
+Input: m = 1, n = 3, maxMove = 3, startRow = 0, startColumn = 1
+Output: 12
+
+
+Approach:
+This is straight forward DFS which is optimized using Memoization.
+Typical DP solution.
+If we move out, then we count it as valid and return 1.
+If we run out of moves, we return 0 from there.
+if we have enough moves, then we move in all 4 directions.
+As we have to keep track of moves, and grid indexes, we have 3D DP.
+
+
+Code:
+class Solution:
+    def findPaths(self, m: int, n: int, maxMove: int, startRow: int, startColumn: int) -> int:
+        def isValid(i, j):
+            return 0 <= i < m and 0 <= j < n
+        
+        dp = defaultdict(lambda: -1)
+        def dfs(i, j, moves):
+            if moves > maxMove:
+                return 0
+            if not isValid(i, j):
+                # print(i, j)
+                return 1
+            
+            if dp[(i, j, moves)] != -1:
+                return dp[(i, j, moves)]
+            res = 0
+            for x, y in dirs:
+                res += dfs(i + x, j + y, moves + 1)
+            dp[(i, j, moves)] = res
+            return dp[(i, j, moves)]
+        
+        dirs = [(-1,0), (1, 0), (0, 1), (0, -1)]
+        # dfs(startRow, startColumn, 0)
+        return dfs(startRow, startColumn, 0) % 1000000007

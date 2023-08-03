@@ -1,0 +1,38 @@
+899. Orderly Queue
+You are given a string s and an integer k. You can choose one of the first k letters of s and 
+append it at the end of the string..
+
+Return the lexicographically smallest string you could have after applying the mentioned step any number of moves.
+
+Approach:
+Remember this here:
+If K > 1, 
+then you can chang position of any character, so if you can changes the position of a character to
+any other position, then the smallest string would be the sorted version of the entire string.
+
+If K == 1,
+then find the smallest by removing 1st character and appending it at the end, simple simulation.
+
+For any String you can move any char to anywhere if you can swap adjacent characters
+
+For any String abc[XY]def you can always do following to swap XY if k > 1
+
+abc[XY]def original string
+[XY]defabc move a to the end, b to the end, c to the end, etc.
+defabc[YX] move Y to the end, we can do it because k > 1, then move X to the end.
+abc[YX]def move d to the end, e to the end, f to the end, etc.
+
+Solution:
+class Solution:
+    def orderlyQueue(self, s: str, k: int) -> str:
+        if k > 1:
+            result = sorted([*s])
+            return "".join(result)
+        else:
+            mini = s
+            for i in range(len(s)):
+                new = s[1:] + s[0]
+                mini = min(mini, new)
+                s = new
+            return mini
+        

@@ -1,0 +1,95 @@
+1162. As Far from Land as Possible
+Given an n x n grid containing only values 0 and 1, where 0 represents water and 1 represents land, 
+find a water cell such that its distance to the nearest land cell is maximized, and return the distance. 
+If no land or water exists in the grid, return -1.
+
+The distance used in this problem is the Manhattan distance: the distance between two cells 
+(x0, y0) and (x1, y1) is |x0 - x1| + |y0 - y1|.
+
+
+Example 1:
+
+Input: grid = [[1,0,1],[0,0,0],[1,0,1]]
+Output: 2
+Explanation: The cell (1, 1) is as far as possible from all the land with distance 2.
+
+Example 2:
+
+Input: grid = [[1,0,0],[0,0,0],[0,0,0]]
+Output: 4
+Explanation: The cell (2, 2) is as far as possible from all the land with distance 4.
+
+Approach:
+The goal is to find the maximum possible distance from any land cell to water cell.
+We follow a standard pattern called multi-source BFS.
+How do we realize that this problem follows the multi-source BFS pattern.
+
+One way is to think of the matrix as a graph.
+At the first level we have all the cells that are land.
+The next level consists of water cells that are reachable at a distance of 1. 
+The level next to that is reachable at a distance of 2 and so on.
+
+Note:
+Manhattan distance is nothing but the number of nodes required to reach the destination node when you 
+can only move in the 4 directions. 
+4 Directions only, it's the important thing.
+
+We are doing BFS here because this problem is similar to Rotten Oranges,
+You can frame the ROTTEN ORANGES like tell me the time when the last orange will become rotten.
+This is basically telling us to perform complete BFS and return the highest level we reached.
+For the graph
+
+1 0 1
+0 0 0
+1 0 1
+
+The nodes and levels are:
+
+Level 0                Level 1                Level 2
+(Land cells)        (Water cells)       (Water cells)
+
+0,0                    0,1                    1,1
+0,2                    2,1
+2,0                    1,0
+2,2                    1,2
+As seen from the above graph, the farthest distance between any land cell to water cell is 2.
+
+
+Code:
+class Solution:
+    def maxDistance(self, grid: List[List[int]]) -> int:
+
+        dirs = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+        def distance(node1, node2):
+            x1, y1 = node1
+            x2, y2 = node2
+            return abs(x1 - x2) + abs(y1 - y2)
+        
+        def isValid(node):
+            x, y = node
+            return 0 <= x < len(grid) and 0 <= y < len(grid[0]) and grid[x][y] == 0
+
+        def bfs(queue):
+            level = 0
+            while queue:
+                for i in range(len(queue)):
+                    node = queue.pop(0)
+                    x, y = node
+                    for d in dirs:
+                        i, j = d
+                        newNode = (x + i, y + j)
+                        if isValid(newNode):
+                            queue.append(newNode)
+                            grid[x + i][y + j] = 1
+                level += 1
+            return level
+            
+        queue = []
+        for i in range(len(grid)):
+            for j in range(len(grid[0])):
+                if grid[i][j] == 1:
+                    queue.append((i, j))
+        if len(queue) == len(grid) * len(grid[0]) or len(queue) == 0:
+            return -1
+                    
+        return bfs(queue) - 1

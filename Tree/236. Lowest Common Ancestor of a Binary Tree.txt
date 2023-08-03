@@ -1,0 +1,82 @@
+236. Lowest Common Ancestor of a Binary Tree
+Given a binary tree, find the lowest common ancestor (LCA) of two given nodes in the tree.
+
+According to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between two nodes p and q as the lowest node in T that has both p and q as descendants (where we allow a node to be a descendant of itself).”
+
+ 
+Example 1:
+
+Input: root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 1
+Output: 3
+Explanation: The LCA of nodes 5 and 1 is 3.
+
+Example 2:
+
+Input: root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 4
+Output: 5
+Explanation: The LCA of nodes 5 and 4 is 5, since a node can be a descendant of itself according to the LCA definition.
+
+Example 3:
+
+Input: root = [1,2], p = 1, q = 2
+Output: 1
+
+
+Approach:
+We can solve this just by using recursion/stack.
+For a tree, if node 'p' is on the left subtree from root and 'q' is on the right subtree.
+Then the Lowest Common Ancestor between them is the root
+Ex 1 (From Above):
+						3
+					5		1
+				  4	  2    6  8
+				  
+	If p = 4 and q = 6, the their LCA is 3, because that is the only node that connects.
+
+	
+We know that for any given node, the Lowest Common Ancestor is itself
+If 'p' and 'q' are on either LEFT or RIGHT subtree, then whichever node in encountered first will become the 
+Lowest Common Ancestor between them.
+
+Code:
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution:
+    def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
+        def findLowestAncestor(root, p, q): 
+            '''
+                return: TreeNode,
+                    it can be LOWEST ancestor of: p, or q, or both.
+                        if it's lowest ancestor of only p -> it should be p itself
+                        if it's lowest ancestor of only q -> it should be q itself
+            '''
+            if not root: return None
+            if root == p or root == q:
+                return root
+            left_LA = findLowestAncestor(root.left,p,q)
+            right_LA = findLowestAncestor(root.right,p,q)    
+            
+            if left_LA and right_LA:
+                return root
+            if left_LA and not right_LA:
+                return left_LA
+            if right_LA and not left_LA:
+                return right_LA
+            
+        # This function is just 'LA', not necessary to be 'LCA';
+        # but, because in this problem,  p and q are guranteed in the tree
+        # what we get will be LA of both p and q, i.e. LCA.
+        LCA =  findLowestAncestor(root, p, q)
+        return LCA
+
+
+
+
+
+
+

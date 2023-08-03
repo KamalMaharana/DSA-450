@@ -13,12 +13,12 @@ contains all the characters, resLen will be used to determine the length of wind
 Then we start the window by moving right pointer in for loop;
 Inside it
 We check if this character is present in TARGET window;
-If yes; then we increment the it's frequency in WINDOW map;
+If yes; then we increment it's frequency in WINDOW map;
 	then we check if frequency of current character == required frequency;
 	if yes; then we increment have
 
 Then within for loop we compress the window size using a WHILE LOOP;
-If HAVE == NEED that that window is valid;
+If HAVE == NEED then that window is valid;
 so we run WHILE loop as long as HAVE == NEED; Inside it
 	We update our result and resLen; then
 	we get the character at left pointer i.e s[left]

@@ -1,0 +1,110 @@
+2477. Minimum Fuel Cost to Report to the Capital
+
+There is a tree (i.e., a connected, undirected graph with no cycles) structure country network consisting of n cities numbered from 0 to n - 1 and exactly n - 1 roads. The capital city is city 0. You are given a 2D integer array roads where roads[i] = [ai, bi] denotes that there exists a bidirectional road connecting cities ai and bi.
+
+There is a meeting for the representatives of each city. The meeting is in the capital city.
+
+There is a car in each city. You are given an integer seats that indicates the number of seats in each car.
+
+A representative can use the car in their city to travel or change the car and ride with another representative. The cost of traveling between two cities is one liter of fuel.
+
+Return the minimum number of liters of fuel to reach the capital city.
+
+ 
+
+Example 1:
+
+Input: roads = [[0,1],[0,2],[0,3]], seats = 5
+Output: 3
+Explanation: 
+- Representative1 goes directly to the capital with 1 liter of fuel.
+- Representative2 goes directly to the capital with 1 liter of fuel.
+- Representative3 goes directly to the capital with 1 liter of fuel.
+It costs 3 liters of fuel at minimum. 
+It can be proven that 3 is the minimum number of liters of fuel needed.
+
+Example 2:
+
+Input: roads = [[3,1],[3,2],[1,0],[0,4],[0,5],[4,6]], seats = 2
+Output: 7
+Explanation: 
+- Representative2 goes directly to city 3 with 1 liter of fuel.
+- Representative2 and representative3 go together to city 1 with 1 liter of fuel.
+- Representative2 and representative3 go together to the capital with 1 liter of fuel.
+- Representative1 goes directly to the capital with 1 liter of fuel.
+- Representative5 goes directly to the capital with 1 liter of fuel.
+- Representative6 goes directly to city 4 with 1 liter of fuel.
+- Representative4 and representative6 go together to the capital with 1 liter of fuel.
+It costs 7 liters of fuel at minimum. 
+It can be proven that 7 is the minimum number of liters of fuel needed.
+Example 3:
+
+
+Input: roads = [], seats = 1
+Output: 0
+Explanation: No representatives need to travel to the capital city.
+
+Approach:
+We solve this using DFS,
+At any node, if we see that,
+if people > seats:
+	That means from here there will be more that 1 car leaving and each car will take 1 Ltr fuel to reach 
+	to next node.
+	So we increment the result fuel in the following way:
+	if people_count % seats == 0:
+        self.result += (people_count // seats)
+    else:
+        self.result += (people_count // seats) + 1
+	
+	Example: If seats = 2, people leaving from current city = 7, then we would require (7//2) = 3 + 1 = 4 cars
+	If seats = 2, people leaving from current city = 8, then we would require (8//2) = 4 cars
+	It really doesn't matter who sits in which car, all that matters is how many cars are leaving from current 
+	city and how many people are leaving from current city.
+
+if people <= seats:
+	That means we have enough seats to accomodate all people in 1 car, so even though multiple people leave
+	from current city but they all will be in 1 car to reduce fuel cost, all can travel from current city to 
+	next city in 1 Ltr fuel.
+	So here, we just increment the fuel consumption (result) by 1.
+	self.result += 1
+
+Rest of the code is just basic DFS implementation on a graph.
+The difference between DFS on graph and binary tree is only the base case of the recursion.
+
+Code:
+class Solution:
+    def minimumFuelCost(self, roads: List[List[int]], seats: int) -> int:
+        graph = defaultdict(list)
+        for u, v in roads:
+            graph[u].append(v)
+            graph[v].append(u)
+        
+        print(graph)
+        self.result = 0
+
+        def dfs(node, parent):
+            if len(graph[node]) == 1 and graph[node][0] == parent:
+                self.result += 1
+                return 1
+            
+            people_count = 1
+            for neigh in graph[node]:
+                if neigh != parent:
+                    people_count += dfs(neigh, node)
+            
+            # Car leaving from current city, each car will take 1 lt fuel
+            if node == 1:
+                print(f"No of people: {people_count}")
+            if node != 0:
+                if people_count <= seats:
+                    self.result += 1
+                else:
+                    if people_count % seats == 0:
+                        self.result += (people_count // seats)
+                    else:
+                        self.result += (people_count // seats) + 1
+            
+            return people_count
+        dfs(0, -1)
+        return self.result
+            

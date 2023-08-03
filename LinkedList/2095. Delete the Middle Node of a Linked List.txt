@@ -1,0 +1,57 @@
+2095. Delete the Middle Node of a Linked List
+Given the Head of a LinkedList, remove the middle node.
+Example 1:
+
+Input: head = [1,3,4,7,1,2,6]
+Output: [1,3,4,1,2,6]
+Explanation:
+The above figure represents the given linked list. The indices of the nodes are written below.
+Since n = 7, node 3 with value 7 is the middle node, which is marked in red.
+We return the new list after removing this node. 
+
+Example 2:
+
+Input: head = [1,2,3,4]
+Output: [1,2,4]
+Explanation:
+The above figure represents the given linked list.
+For n = 4, node 2 with value 3 is the middle node, which is marked in red.
+
+Example 3:
+
+Input: head = [2,1]
+Output: [2]
+Explanation:
+The above figure represents the given linked list.
+For n = 2, node 1 with value 1 is the middle node, which is marked in red.
+Node 0 with value 2 is the only node remaining after removing node 1.
+
+Approach:
+Just get the middle node using Floyd Hare and Tortoise Method (Slow and Fast Pointer)
+Along with it, have a prev pointer pointing to node just behind slow.
+
+So after getting the middle node, check if you have any value in prev 
+If prev == None: this means there is only single node in Linkedlist and the loop ended coz 
+fast.next = None, in this case remove current Node by just return None from there
+If prev != None, then prev.next = slow.next
+EZ
+Code:
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def deleteMiddle(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        slow = fast = head
+        prev = None
+        while fast and fast.next:
+            prev = slow
+            slow = slow.next
+            fast = fast.next.next
+        
+        if prev:
+            prev.next = slow.next
+            return head
+        else:
+            return None

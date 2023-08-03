@@ -1,0 +1,105 @@
+Run-length encoding is a string compression method that works by replacing 
+consecutive identical characters (repeated 2 or more times) with the concatenation 
+of the character and the number marking the count of the characters (length of the run). 
+For example, to compress the string "aabccc" we replace "aa" by "a2" and replace "ccc" by "c3". 
+Thus the compressed string becomes "a2bc3".
+
+Notice that in this problem, we are not adding '1' after single characters.
+
+Given a string s and an integer k. You need to delete at most k characters from s 
+such that the run-length encoded version of s has minimum length.
+
+Find the minimum length of the run-length encoded version of s after deleting at most k characters.
+
+ 
+
+Example 1:
+
+Input: s = "aaabcccd", k = 2
+Output: 4
+Explanation: Compressing s without deleting anything will give us "a3bc3d" of length 6. Deleting any of the characters 'a' or 'c' would at most decrease the length of the compressed string to 5, for instance delete 2 'a' then we will have s = "abcccd" which compressed is abc3d. Therefore, the optimal way is to delete 'b' and 'd', then the compressed version of s will be "a3c3" of length 4.
+Example 2:
+
+Input: s = "aabbaa", k = 2
+Output: 2
+Explanation: If we delete both 'b' characters, the resulting compressed string would be "a4" of length 2.
+Example 3:
+
+Input: s = "aaaaaaaaaaa", k = 0
+Output: 3
+Explanation: Since k is zero, we cannot delete anything. The compressed string is "a11" of length 3.
+
+
+
+Code:
+Ideally we would want to come up with a greedy solution. 
+Say given a budget of k deletions, should we delete from s, 
+characters with just a single instance? That seems to give the biggest bang for your buck. 
+Example: abbbcddde, k = 3. If we delete a, c, and e,
+we will get the minimimal run-length encoded string 3b3d. 
+Deleting anything else will yield a longer result. 
+But what if you have xyzaabbbaa with again k = 3? 
+If we delete xyz, we get aabbbaa which compresses to 2a3b2a. 
+If we delete bbb, we connect up two contiguous blocks of aa 
+and get xyzaaaa which compresses to xyz4a. This is a shorter string! 
+So greedy solution doesn't work. We must then try all possible deletion 
+choices and return the one with minimum cost. Recursive backtracking will result 
+in too many possible combinations so dynamic programming or 
+memoized top-down recursive approach is the only way.
+
+class Solution:
+    def getLengthOfOptimalCompression(self, s: str, k: int) -> int:
+        # We define f(i, curr_run_ch, run_length, nb_dels_remain) to return 
+        # the minimum, additional, number of characters it will cost to run-length 
+        # compress the substring s[i..n-1].
+        # `curr_run_ch` is the character we have in the current "run", or the same
+        # contiguous block of characters. 
+        # `run_length` is the length of the current "run", or the length of the
+        # contiguous block of identical characters.
+		#     e.g. if we just encoded "aaaaa", `curr_run_ch` is "a" and `run_length` = 5
+        # `nb_dels_remain` is the number of delete operations we have available to us,
+        # should we choose to use them
+        memo = {}
+        def f(i, curr_run_ch, run_length, nb_dels_remain):
+            if i == len(s):
+                return 0
+            
+            key = (i, curr_run_ch, run_length, nb_dels_remain)
+            if key in memo:
+                return memo[key]
+            
+            # At character i, we have two possible options, we could choose to either
+            # delete this character or keep this character. Each choice we make will
+            # incurr some additional run-length encoding length for s[i..n-1]. We return
+            # the minimum of the two.
+            
+            # Delete s[i]
+            del_ch_cost = float('inf')
+            if nb_dels_remain > 0:
+                # Deleting s[i] means the latest character we kept stays the same AND
+                # the current run-length of characters stays the same as well
+                del_ch_cost = f(i + 1, curr_run_ch, run_length, nb_dels_remain - 1)
+            
+            # Keep s[i]
+            keep_ch_cost = 0
+            if s[i] == curr_run_ch:
+			    # The new character at s[i] we are about to encode is the same as the character in the
+				# current "run", we could choose to include it into the current run of course.
+                # Be careful that if we started with run-length of 1, 9, 99, 999 and etc, encoding another
+                # character same as `curr_run_ch`  into the same "run" will require an extra digit.
+                # e.g. 'a' => '2a' '9a' => '10a', '99a' => '100a'
+                extra_digit_cost = 0
+                if run_length == 1 or len(str(run_length + 1)) > len(str(run_length)):
+                    extra_digit_cost = 1
+                keep_ch_cost = extra_digit_cost + f(i + 1, curr_run_ch, run_length + 1, nb_dels_remain)
+            else:
+                # s[i] != curr_run_ch, we are going to need to run-length encode at least
+                # one instance of s[i] which would cost 1, plus whatever the cost to encode
+                # the rest. Of course that also means the current "run" will "reset" and start anew with
+				# a single character s[i]
+                keep_ch_cost = 1 + f(i + 1, s[i], 1, nb_dels_remain)
+            
+            memo[key] = min(keep_ch_cost, del_ch_cost)
+            return memo[key]
+        
+        return f(0, '', 0, k)

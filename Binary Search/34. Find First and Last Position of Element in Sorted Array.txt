@@ -1,0 +1,49 @@
+34. Find First and Last Position of Element in Sorted Array
+Given an array of integers nums sorted in non-decreasing order, 
+find the starting and ending position of a given target value.
+
+If target is not found in the array, return [-1, -1].
+
+You must write an algorithm with O(log n) runtime complexity.
+
+
+Example 1:
+
+Input: nums = [5,7,7,8,8,10], target = 8
+Output: [3,4]
+
+Example 2:
+
+Input: nums = [5,7,7,8,8,10], target = 6
+Output: [-1,-1]
+Example 3:
+
+Input: nums = [], target = 0
+Output: [-1,-1]
+
+
+Approach:
+Just do Binary Search twice.
+1 for starting value, 2nd to search for value target + 1
+1st is obvious.
+For 2nd, its a smart trick.
+If we find for a value just greater that target.
+Then regardless of it being present in the array or not, at the end we will always receive
+the index of value that is next to our target value.
+So we just need to take index - 1 which is the last index of our target value.
+
+Code:
+class Solution:
+    def searchRange(self, nums: List[int], target: int) -> List[int]:
+        def search(n):
+            lo, hi = 0, len(nums)
+            while lo < hi:
+                mid = (lo + hi) // 2
+                if nums[mid] >= n:
+                    hi = mid
+                else:
+                    lo = mid + 1
+            return lo
+        lo = search(target)
+        hi = search(target + 1) - 1
+        return [lo, hi] if target in nums[lo:lo+1] else [-1, -1]

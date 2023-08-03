@@ -1,0 +1,78 @@
+823. Binary Trees With Factors
+Given an array of unique integers, arr, where each integer arr[i] is strictly greater than 1.
+
+We make a binary tree using these integers, and each number may be used for any number of times. 
+Each non-leaf node's value should be equal to the product of the values of its children.
+
+Return the number of binary trees we can make. The answer may be too large so return the answer modulo 109 + 7.
+
+
+Example 1:
+
+Input: arr = [2,4]
+Output: 3
+Explanation: We can make these trees: [2], [4], [4, 2, 2]
+
+Example 2:
+
+Input: arr = [2,4,5,10]
+Output: 7
+Explanation: We can make these trees: [2], [4], [5], [10], [4, 2, 2], [10, 2, 5], [10, 5, 2].
+
+Approach:
+1.sort the array in ascending order
+2.create a dictionary and initialize it
+3.loop through the data
+4.return sum of values
+
+While looping:
+This is a n**2 loop
+within that
+if not(n % arr[j]) and n // arr[j] in dp: 
+"Means if there was any previous number that is a multiple of current number, then it's an eligible candidate"
+"for dp, and if the divisible of that number is present in that array, then do the below steps"
+    dp[n] += dp[arr[j]] * dp[n//arr[j]]
+    dp[n] %= MOD
+
+Method: DP
+
+Since the parent node is the product of the children, the value of the parent nodes must larger than the values of its children.
+Thus, we can sort the arr first, and start to calculate the combination of products from smallest node to the largest one.
+For example, arr = [18, 3, 6, 2]
+After sorting, arr = [2, 3, 6, 18]
+Then, a dict count_product_dict needs to be created to store the count of combinations and all the initial values should be 1.
+
+For 2:
+	- We can ignore the first number as the smallest number does not have a product of 2 smaller numbers.
+
+For 3:
+	- We can just scan the numbers smaller than 3
+		- Since 2 is larger than half of 3, it is rejected as 3 must not be a product of 2 and a integer.
+
+For 6:
+	- We can just scan the numbers smaller than 6
+		- 6 % 2 == 0 -> (2, 6 // 2)
+			- count_product_dict[6] += count_product_dict[2] * count_product_dict[6 // 2]
+		- 6 % 3 == 0 -> (3, 6 // 3)
+			- count_product_dict[6] += count_product_dict[2] * count_product_dict[6 // 2]
+			
+Solution:
+class Solution:
+    def numFactoredBinaryTrees(self, arr: List[int]) -> int:
+        arr.sort()
+        MOD = 10**9 + 7
+        
+        # create a dictionary and initialize
+        dp = {}
+        for n in arr:
+            dp[n] = 1
+            
+        # loop through each number
+        for i, n in enumerate(arr):
+            for j in range(i):
+                if not(n % arr[j]) and n // arr[j] in dp:
+                    dp[n] += dp[arr[j]] * dp[n//arr[j]]
+                    dp[n] %= MOD
+        
+        return sum(dp.values()) % MOD
+

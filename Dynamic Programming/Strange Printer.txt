@@ -1,0 +1,54 @@
+664. Strange Printer
+There is a strange printer with the following two special properties:
+
+The printer can only print a sequence of the same character each time.
+At each turn, the printer can print new characters starting 
+from and ending at any place and will cover the original existing characters.
+Given a string s, return the minimum number of turns the printer needed to print it.
+
+ 
+
+Example 1:
+
+Input: s = "aaabbb"
+Output: 2
+Explanation: Print "aaa" first and then print "bbb".
+Example 2:
+
+Input: s = "aba"
+Output: 2
+Explanation: Print "aaa" first and then print "b" from the second place of the string, which will cover the existing character 'a'.
+ 
+
+Constraints:
+
+1 <= s.length <= 100
+s consists of lowercase English letters.
+
+Approach:
+For each character at the end of the string, lets consider 2 cases:
+
+It was simply inserted with the cost of 1
+It was free from some previous step to the left that printed this character already (we can print extra character all the way till the end)
+Consider string CABBA. 
+Last character could be simply inserted after a string CABB with the cost of 1 or 
+it could be free since there is an A character to the left and 
+we could simply print extra 
+As all the way till the end: CAAAA we just need to consider the cost of building string CA 
+(same as CAAAA) and BB, in other words, split remaining string into CA | BB | A
+
+Code:
+class Solution:
+    def strangePrinter(self, S: str) -> int:
+        memo = {}
+        def dp(i, j):
+            if i > j: return 0
+            if (i, j) not in memo:
+                ans = dp(i+1, j) + 1
+                for k in range(i+1, j+1):
+                    if S[k] == S[i]:
+                        ans = min(ans, dp(i, k-1) + dp(k+1, j))
+                memo[i, j] = ans
+            return memo[i, j]
+
+        return dp(0, len(S) - 1)

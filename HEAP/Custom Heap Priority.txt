@@ -1,0 +1,59 @@
+692. Top K Frequent Words
+Given an array of strings words and an integer k, return the k most frequent strings.
+
+Return the answer sorted by the frequency from highest to lowest. 
+Sort the words with the same frequency by their lexicographical order.
+
+ 
+
+Example 1:
+
+Input: words = ["i","love","leetcode","i","love","coding"], k = 2
+Output: ["i","love"]
+Explanation: "i" and "love" are the two most frequent words.
+Note that "i" comes before "love" due to a lower alphabetical order.
+Example 2:
+
+Input: words = ["the","day","is","sunny","the","the","the","sunny","is","is"], k = 4
+Output: ["the","is","sunny","day"]
+Explanation: "the", "is", "sunny" and "day" are the four most frequent words, 
+with the number of occurrence being 4, 3, 2 and 1 respectively.
+
+
+Approach:
+Here we can use heap just like we do to find top K values from an array.
+We push to heap, when heap size > k: we pop from heap, by this we always maintai heap size at most "k"
+And as it's a MAX Heap, we only get TOP Frequent values in heap.
+But here we need to use custom priority logic for heap because
+if freq[1] == freq[2]:
+	if word_1 < word_2:
+	this means 1 > 2
+
+We customize the heap priority by changing the "__lt__" dunder method which is associated with every class 
+This method overrided the existing "less than" method, and "lt" comes from bash script called as "less than"
+
+
+Code:
+import collections, heapq
+class ReverseWordOrder:
+    def __init__(self, word):
+        self.word = word
+    
+    def __lt__(self, other):
+        # guaranteed no equality since we are comparing keys in counter
+        # flipping the lesser than comparator for our purpose to keep greater word in heap
+        return self.word > other.word
+
+class Solution:
+    def topKFrequent(self, words: List[str], k: int) -> List[str]:
+        counter = collections.Counter(words)    # O(n) space and time
+        heap = []    # max length will be k, so O(k) extra space
+        for word,freq in counter.items():    # O(n) time to iterate counter
+            heapq.heappush(heap, (freq,ReverseWordOrder(word)))    # O(logk) for each heappush operation
+            if len(heap) > k:    # by not letting the heap exceed more than k length
+                heapq.heappop(heap)    # O(logk) for each heappop operation
+        output = []    # O(k) space, same length as heap
+        while heap:    # O(k) since len(heap) = k
+            _freq, reverseWordObj = heapq.heappop(heap)    # O(logk)
+            output.append(reverseWordObj.word)
+        return output[::-1]    # O(k)

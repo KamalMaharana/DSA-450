@@ -1,0 +1,65 @@
+473. Matchsticks to Square
+You are given an integer array matchsticks where matchsticks[i] is the length of the ith matchstick. 
+You want to use all the matchsticks to make one square. You should not break any stick, 
+but you can link them up, and each matchstick must be used exactly one time.
+
+Return true if you can make this square and false otherwise.
+
+
+Example 1:
+
+Input: matchsticks = [1,1,2,2,2]
+Output: true
+Explanation: You can form a square with length 2, one side of the square came two sticks with length 1.
+
+Example 2:
+
+Input: matchsticks = [3,3,3,3,4]
+Output: false
+Explanation: You cannot find a way to form a square with all the matchsticks.
+
+Approach:
+This is similar to "Partition to K equal sum subsets"
+Here we know that we need to partition the array in 4, such that each partition has sum which is a multiple of 4.
+As sticks needs to form square, sum of all sides % 4 == 0 
+So we recursively check while going to every values
+if we find a subset with sum = target, then we reduce the subsets needed to be found.
+if we find 1 subset, now we require 2 because from 4 subsets if 3 are equal to target, then 4th
+will eventually be equal to target.
+After we have found 3 subsets with required sum, we return TRUE
+Else we return False.
+
+Code:
+class Solution:
+    def makesquare(self, matchsticks: List[int]) -> bool:
+        total = sum(matchsticks)
+        if total % 4 != 0:
+            return False
+        
+        target = total//4
+        if max(matchsticks) > target:
+            return False
+        
+        length = len(matchsticks)
+        visited = [False for i in range(length)]
+        
+        def isPresent(index, curr_sum, target, count, visited, length):
+            if count == 1:
+                return True
+            
+            if curr_sum == target:
+                return isPresent(0, 0, target, count - 1, visited, length)
+            
+            for i in range(index, length):
+                new_val = curr_sum + matchsticks[i]
+                if new_val <= target:
+                    if not visited[i]:
+                        visited[i] = True
+                        if isPresent(i + 1, new_val, target, count, visited, length):
+                            return True
+                        visited[i] = False
+            return False
+        
+        
+        return isPresent(0, 0, target, 4, visited, length)
+        # return result

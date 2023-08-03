@@ -1,0 +1,51 @@
+86. Partition List
+Given the head of a linked list and a value x, partition it such that all nodes less than x 
+come before nodes greater than or equal to x.
+
+You should preserve the original relative order of the nodes in each of the two partitions.
+
+Example 1:
+Input: head = [1,4,3,2,5,2], x = 3
+Output: [1,2,2,4,3,5]
+
+Example 2:
+
+Input: head = [2,1], x = 2
+Output: [1,2]
+
+Approach:
+We can solve this with 2 Pointers.
+pointer_a = Linked List consisting all values less than x
+pointer_b = Linked List consisting all values greater than equal to x
+As it's a LinkedList, we need to have head and tail for both
+Then after filling them, connect
+tail_1 to head_2
+Just iterate the Linked normally
+if node.val < x:
+	tail_1.next = node
+	tail_1 = node
+else:
+	tail_2.next = node
+	tail_2 = node
+
+Code:
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def partition(self, head: ListNode, x: int) -> ListNode:
+        h1 = l1 = ListNode(0)
+        h2 = l2 = ListNode(0)
+        while head:
+            if head.val < x:
+                l1.next = head
+                l1 = l1.next
+            else:
+                l2.next = head
+                l2 = l2.next
+            head = head.next
+        l2.next = None
+        l1.next = h2.next
+        return h1.next

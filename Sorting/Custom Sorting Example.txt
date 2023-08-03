@@ -1,0 +1,25 @@
+from functools import cmp_to_key
+class Solution:
+    def topKFrequent(self, words: List[str], k: int) -> List[str]:
+        def custom_sort(a, b):
+            if a[0] > b[0]:
+                return 1
+            elif a[0] == b[0]:
+                if a[1] < b[1]:
+                    return 1
+                else:
+                    return -1
+            else:
+                return -1
+            
+        freq = Counter(words)
+        freq_arr = []
+        for word in freq:
+            freq_arr.append([freq[word], word])
+        key = cmp_to_key(custom_sort)
+        freq_arr = sorted(freq_arr, reverse = True, key = key)
+        result = []
+        for _, word in freq_arr[:k]:
+            result.append(word)
+            
+        return result

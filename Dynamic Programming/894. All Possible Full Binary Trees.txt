@@ -1,0 +1,50 @@
+Question:
+Given an integer n, return a list of all possible full binary trees with n nodes. 
+Each node of each tree in the answer must have Node.val == 0.
+
+Each element of the answer is the root node of one possible tree. 
+You may return the final list of trees in any order.
+
+A full binary tree is a binary tree where each node has exactly 0 or 2 children.
+
+Approach:
+This is a brute force approach with Memoization.
+If n is even, then there will be 1 node with 1 child, this means it'll be not be a FULL BINARY TREE.
+Now, every time there will be some nodes on right and some nodes on left, 
+so left and right will become a subproblem in itself.
+
+
+
+Solution:
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def allPossibleFBT(self, n: int) -> List[Optional[TreeNode]]:
+        dp = {}
+        def dfs(n: int):
+            if n == 0:
+                return []
+            elif n == 1:
+                return [TreeNode(0)]
+            
+            if n in dp:
+                return dp[n]
+            result = []
+            for l in range(n):
+                r = n - 1 - l
+                left_branch = dfs(l)
+                right_branch = dfs(r)
+                
+                for t1 in left_branch:
+                    for t2 in right_branch:
+                        result.append(TreeNode(0, t1, t2))
+            
+            dp[n] = result
+            return result
+        if n % 2 == 0:
+            return []
+        return dfs(n)
