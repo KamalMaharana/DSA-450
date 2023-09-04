@@ -1,0 +1,10 @@
+Just count the number of components using DFS.
+You can also use DSU to count the components
+1. DSU:
+ - After UNION of all edges, go thru parent array
+ - Count all the values where parent[node] == node, all nodes that have themselves as parents are a different component
+ - result = count - 1
+
+2. DFS
+ - Using for loop, count all the components
+ - return count - 1
