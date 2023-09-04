@@ -1,0 +1,10 @@
+Initialize the dp with value = 0
+if we want to extend the submatrix length
+we will check the following:
+left, top, top-left and check if all these fields have minimum = 1,
+meaning these fields are either part of existing submatrix or it's the 
+starting submatrix with all 1's
+
+0 0 0 0
+0 1 1 1
+0 0 1 1 <- matrix[i][j] + min(left, top, top-left) = 1 + min(1,1,1) = 1 + 1 = 2
