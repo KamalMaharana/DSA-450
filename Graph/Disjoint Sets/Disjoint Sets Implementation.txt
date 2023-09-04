@@ -24,8 +24,8 @@ class DSU:
             self.rank[v] += 1
     
     def unionBySize(self, u, v):
-        ult_p_u = self.findParent(u);
-        ult_p_v = self.findParent(v);
+        ult_p_u = self.findParent(u)
+        ult_p_v = self.findParent(v)
         # Ultimate Parent of U = ult_p_u
         # Ultimate Parent of V = ult_p_v
         if ult_p_u == ult_p_v: return
