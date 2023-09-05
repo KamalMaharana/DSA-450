@@ -1,0 +1,49 @@
+You are given an arr of length n, indicating gas station.
+You are also given K gas station.
+You need to put these K gas station in arr such that the maximum distance between any 3 gas station is minimum.
+
+
+arr = [1,2,3,4,5]
+k = 4
+answer = 0.5
+place every new station between existing station.
+
+Approach:
+1. Find the section length, section is distance between 2 gas station.
+2. Store each section in Max Heap like this, (sectionLength, index)
+Also have a array of section, called slots where each index denote the number of gas station inserted in that section.
+
+We put 1 gas station at a time
+run a loop from i = 0 -> K
+
+2. Take the maximum from Heap
+3. Calculate the initial section length.
+4. new section length = initial_section_length / number of gas stations in that slot
+5. Add the new section length with the index back into the Heap.
+
+At the end, the final resilt is the last element on the Heap
+
+
+Code:
+import heapq
+def minimiseMaxDistance(arr: [int], k: int) -> float:
+    # Write your code here.
+    n = len(arr)
+    slots = [0] * (n - 1)
+    heap = []
+    for i in range(n - 1):
+        dist = arr[i + 1] - arr[i]
+        heapq.heappush(heap, (-dist, -i))
+    
+    for i in range(k):
+        top = heapq.heappop(heap)
+        # print(top)
+        idx = top[1] * -1
+        dist = arr[idx + 1] - arr[idx]
+        slots[idx] += 1
+        new_section_len = dist / (slots[idx] + 1)
+        heapq.heappush(heap, (-new_section_len, -idx))
+    # print(slots)
+    # print(heap)
+    result = heapq.heappop(heap)
+    return result[0] * -1
