@@ -3,7 +3,7 @@ class Solution:
         bill_5 = 0
         bill_10 = 0
         for bill in bills:
-            change_req = abs(bill - 5)
+            change_req = bill - 5
             # for 20$ bill
             if change_req == 15:
                 if bill_10 > 0 and bill_5 > 0:
