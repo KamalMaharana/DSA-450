@@ -39,13 +39,19 @@ class Heap:
         return self.heap[0]
     
     def pop(self) -> int:
-        if self.size == 0:
-            return float('inf')
-        result = self.heap[0]
-        self.heap[0] = self.heap.pop()
-        self.size -= 1
-        self.heapifyDown()
-        return result
+        if self.size > 0:
+            result = self.heap[0]
+            # last element on top for temporary
+            temp = self.heap.pop()
+            self.size -= 1
+            if self.size == 0:
+                return result
+            self.heap[0] = temp
+            # self.size -= 1
+            self.heapifyDown()
+            return result
+        else:
+            raise Exception("Empty Heap")
     
     def push(self, val: int) -> None:
         self.heap.append(val)
