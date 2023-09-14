@@ -1,0 +1,49 @@
+You are given a list of airline tickets where tickets[i] = [fromi, toi] represent the departure and the arrival airports of one flight. Reconstruct the itinerary in order and return it.
+
+All of the tickets belong to a man who departs from "JFK", thus, the itinerary must begin with "JFK". If there are multiple valid itineraries, you should return the itinerary that has the smallest lexical order when read as a single string.
+
+For example, the itinerary ["JFK", "LGA"] has a smaller lexical order than ["JFK", "LGB"].
+You may assume all tickets form at least one valid itinerary. You must use all the tickets once and only once.
+
+
+Input: tickets = [["MUC","LHR"],["JFK","MUC"],["SFO","SJC"],["LHR","SFO"]]
+Output: ["JFK","MUC","LHR","SFO","SJC"]
+
+Input: tickets = [["JFK","SFO"],["JFK","ATL"],["SFO","ATL"],["ATL","JFK"],["ATL","SFO"]]
+Output: ["JFK","ATL","JFK","SFO","ATL","SFO"]
+Explanation: Another possible reconstruction is ["JFK","SFO","ATL","JFK","ATL","SFO"] but it is larger in lexical order.
+
+Approach:
+Euler Path finding algorithm.
+While creating adjacency list or graph, we sort the dictionary values in descending order because here we will explore 
+the highest lexical string 1st but add the answer in reverse order.
+
+So if path = [Z, Y, T, M, G]
+reversed path = [G,M,T,Y,Z] which is lexically the sortest.
+Move until we reach a node with where there is no neighbours to explore, add it in the result path and comeback till you find 
+another node where we still have some neighbours to explore.
+After this there will be 1 point where we have explored the nodes, so again add it in the result path and trace back.
+This way we are adding the nodes in reverse order.
+
+
+Code:
+class Solution:
+    def dfs(self, airport):
+        while self.adj_list[airport]:
+            candidate = self.adj_list[airport].pop()
+            self.dfs(candidate)
+        self.route.append(airport)
+        
+    def findItinerary(self, tickets: List[List[str]]) -> List[str]:
+        self.route = []
+        self.adj_list = defaultdict(list)
+        for i,j in tickets:
+            self.adj_list[i].append(j)
+        for key in self.adj_list: 
+            self.adj_list[key] = sorted(self.adj_list[key], reverse=True)
+            
+        self.dfs("JFK")
+        return self.route[::-1]
+        
+            
+        
