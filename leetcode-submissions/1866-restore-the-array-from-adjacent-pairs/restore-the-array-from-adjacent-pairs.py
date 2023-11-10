@@ -14,12 +14,12 @@ class Solution:
                 break
         stack = []
         visited = set()
-        def dfs(node):
-            if node not in visited:
-                visited.add(node)
-                for baju_wala in graph[node]:
-                    dfs(baju_wala)
-                stack.append(node)
+        def dfs(u):
+            stack.append(u)
+            visited.add(u)
+            for v in graph[u]:
+                if v not in visited:
+                    dfs(v)
         
         dfs(start)
         for i in freq:
