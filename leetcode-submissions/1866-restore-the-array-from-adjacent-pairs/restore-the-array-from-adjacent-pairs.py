@@ -22,8 +22,4 @@ class Solution:
                     dfs(v)
         
         dfs(start)
-        # for i in freq:
-        #     if i not in visited:
-        #         dfs(i)
-        
         return stack
