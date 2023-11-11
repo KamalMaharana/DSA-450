@@ -11,7 +11,6 @@ class Graph:
         self.nodes += 1
         
     def shortestPath(self, node1: int, node2: int) -> int:
-        if not self.nodes: return -1
         heap = []
         heappush(heap, (0, node1))
         dist = [inf] * self.nodes
