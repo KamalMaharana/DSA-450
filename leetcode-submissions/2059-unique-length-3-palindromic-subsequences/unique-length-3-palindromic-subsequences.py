@@ -3,8 +3,6 @@ class Solution:
         result = 0
         n = len(s)
         for i in range(26):
-            start = None
-            end = None
             chars = set()
             ch = chr(i + ord('a'))
             i = 0
