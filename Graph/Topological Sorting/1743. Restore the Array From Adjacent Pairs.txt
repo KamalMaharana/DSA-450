@@ -1,0 +1,78 @@
+1743. Restore the Array From Adjacent Pairs
+There is an integer array nums that consists of n unique elements, but you have forgotten it. However, you do remember every pair of adjacent elements in nums.
+
+You are given a 2D integer array adjacentPairs of size n - 1 where each adjacentPairs[i] = [ui, vi] indicates that the elements ui and vi are adjacent in nums.
+
+It is guaranteed that every adjacent pair of elements nums[i] and nums[i+1] will exist in adjacentPairs, either as [nums[i], nums[i+1]] or [nums[i+1], nums[i]]. The pairs can appear in any order.
+
+Return the original array nums. If there are multiple solutions, return any of them.
+
+ 
+
+Example 1:
+
+Input: adjacentPairs = [[2,1],[3,4],[3,2]]
+Output: [1,2,3,4]
+Explanation: This array has all its adjacent pairs in adjacentPairs.
+Notice that adjacentPairs[i] may not be in left-to-right order.
+Example 2:
+
+Input: adjacentPairs = [[4,-2],[1,4],[-3,1]]
+Output: [-2,4,1,-3]
+Explanation: There can be negative numbers.
+Another solution is [-3,1,4,-2], which would also be accepted.
+Example 3:
+
+Input: adjacentPairs = [[100000,-100000]]
+Output: [100000,-100000]
+ 
+
+Constraints:
+
+nums.length == n
+adjacentPairs.length == n - 1
+adjacentPairs[i].length == 2
+2 <= n <= 105
+-105 <= nums[i], ui, vi <= 105
+There exists some nums that has adjacentPairs as its pairs.
+
+Approach:
+This is a graph problem.
+Each number is node, and the edge denotes that number1 and number2 are adjacent.
+The main part is to find the start node.
+Here the start node will be the node that has only 1 neighbour.
+
+Now using this start node do the following:
+Here the main part is to maintain the order of the nodes.
+Topological sort or just DFS can solve this problem.
+
+Topological sort is nothing but DFS but after DFS call, you add the value in stack.
+So in this problem either add it after recursive DFS call or before the recursive dfs call.
+
+
+Code:
+class Solution:
+    def restoreArray(self, adjacentPairs: List[List[int]]) -> List[int]:
+        graph = defaultdict(list)
+        freq = defaultdict(int)
+        for u, v in adjacentPairs:
+            graph[u].append(v)
+            graph[v].append(u)
+            freq[u] += 1
+            freq[v] += 1
+        start = None
+        for i in freq:
+            if freq[i] == 1:
+                start = i
+                break
+        stack = []
+        visited = set()
+        def dfs(u):
+            stack.append(u)
+            visited.add(u)
+            for v in graph[u]:
+                if v not in visited:
+                    dfs(v)
+        
+        dfs(start)
+        return stack
