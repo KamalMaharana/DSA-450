@@ -10,7 +10,6 @@ class Solution:
                 end = max(end, i + j)
         
         result = []
-        # print(_map)
         for i in range(end + 1):
             result += _map[i][::-1]
         return result
