@@ -14,7 +14,4 @@ class Solution:
             if window[0] == window[1] == window[2]:
                 if not result or int(result) < int(window):
                     result = window
-                # else:
-                #     if int(result) < int(window):
-                    
         return str(result)
