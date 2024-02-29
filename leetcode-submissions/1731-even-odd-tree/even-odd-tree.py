@@ -6,14 +6,15 @@
 #         self.right = right
 class Solution:
     def isEvenOddTree(self, root: Optional[TreeNode]) -> bool:
-        queue = [root]
+        queue = deque()
+        queue.append(root)
         is_even = True
         while queue:
             l = len(queue)
             maxi = 0
             mini = 0
             for i in range(l):
-                node = queue.pop(0)
+                node = queue.popleft()
                 if not maxi:
                     maxi = -inf
                 if not mini:
