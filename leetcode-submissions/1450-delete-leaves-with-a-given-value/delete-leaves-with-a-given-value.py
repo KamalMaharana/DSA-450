@@ -7,7 +7,6 @@
 class Solution:
     def removeLeafNodes(self, root: Optional[TreeNode], target: int) -> Optional[TreeNode]:
         def isleaf(node):
-            # print(node.val)
             return node.left == None and node.right == None
 
         def dfs(node):
