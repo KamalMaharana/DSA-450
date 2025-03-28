@@ -1,18 +1,21 @@
 class Solution:
     def check(self, nums: List[int]) -> bool:
         n = len(nums)
-        for i in range(n):
-            cnt = 0
-            j = i
-            prev = 0
-            while cnt != n:
-                curr = nums[j % n]
-                if curr >= prev:
-                    prev = curr
-                else:
-                    break
-                cnt += 1
-                j += 1
-            if cnt == n:
-                return True
-        return False
+        if n == 1:
+            return True
+        i = 1
+        pivot = False
+        while i < n:
+            while i < n and nums[i] > nums[i - 1]:
+                i += 1
+            
+            if i < n and nums[i] < nums[i - 1]:
+                if pivot:
+                    return False
+                pivot = True
+            
+            i += 1
+
+        if nums[-1] > nums[0] and pivot:
+            return False
+        return True
