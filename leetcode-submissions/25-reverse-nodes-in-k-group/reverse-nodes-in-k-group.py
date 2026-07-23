@@ -1,20 +1,30 @@
-class Solution(object):
-    def reverseKGroup(self, head, k):
-        count, node = 0, head
-        while node and count < k:
-            node = node.next
-            count += 1
-        if count < k: return head
-        new_head, prev = self.reverse(head, count)
-        head.next = self.reverseKGroup(new_head, k)
-        return prev
-    
-    def reverse(self, head, count):
-        prev, cur, nxt = None, head, head
-        while count > 0:
-            nxt = cur.next
-            cur.next = prev
-            prev = cur
-            cur = nxt
-            count -= 1
-        return (cur, prev)
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def reverseKGroup(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
+        def reverse(head):
+            cnt = 0
+            stack = []
+            temp = head
+            while temp and cnt < k:
+                stack.append(temp)
+                temp = temp.next
+                cnt += 1
+            
+            if cnt != k:
+                return head
+            else:
+                next_head = stack[-1].next
+                dummy_head = ListNode(-1)
+                temp = dummy_head
+                while stack:
+                    node = stack.pop()
+                    temp.next = node
+                    temp = node
+                dummy_head = dummy_head.next
+            temp.next = reverse(next_head)
+            return dummy_head
+        return reverse(head)
