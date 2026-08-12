@@ -1,17 +1,20 @@
 class Solution:
     def maxSubarrayLength(self, nums: List[int], k: int) -> int:
-        freq = defaultdict(int)
-        left = 0
-        right = 0
-        curr_max = 0
+        i = 0
+        j = 0
+        l = len(nums)
+        _map = defaultdict(int)
         res = 0
-        while right < len(nums):
-            n = nums[right]
-            freq[n] += 1
-            while freq[n] > k:
-                n2 = nums[left]
-                freq[n2] -= 1
-                left += 1
-            res = max(res, right - left + 1)
-            right += 1
+        while j < l:
+            # print(_map)
+            n = nums[j]
+            while i < j and _map[n] >= k:
+                prev = nums[i]
+                _map[prev] -= 1
+                i += 1
+            
+            _map[n] += 1            
+            res = max(res, j - i + 1)
+            j += 1
         return res
+        
