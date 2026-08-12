@@ -6,7 +6,6 @@ class Solution:
         _map = defaultdict(int)
         res = 0
         while j < l:
-            # print(_map)
             n = nums[j]
             while i < j and _map[n] >= k:
                 prev = nums[i]
