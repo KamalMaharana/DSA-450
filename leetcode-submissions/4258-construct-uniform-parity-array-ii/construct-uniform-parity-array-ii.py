@@ -1,8 +1,6 @@
 class Solution:
     def uniformArray(self, nums1: list[int]) -> bool:
         nums1.sort()
-        even_possible = False
-        odd_possible = False
         # All evens
         odd = 1 if nums1[0] % 2 == 1 else 0
         for n in nums1[1:]:
